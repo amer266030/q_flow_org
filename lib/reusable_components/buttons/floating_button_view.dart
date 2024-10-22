@@ -26,6 +26,7 @@ class FloatingButtonView extends StatelessWidget {
         size: 60,
         builder: (context, open, animation) {
           return FloatingActionButton(
+            heroTag: null,
             backgroundColor: context.primary,
             shape: const StadiumBorder(),
             onPressed: open,
@@ -37,6 +38,7 @@ class FloatingButtonView extends StatelessWidget {
         size: 60,
         builder: (context, close, animation) {
           return FloatingActionButton(
+            heroTag: null,
             backgroundColor: context.primary,
             shape: const StadiumBorder(),
             onPressed: close,

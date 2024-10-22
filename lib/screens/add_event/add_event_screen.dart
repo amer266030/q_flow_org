@@ -1,80 +1,78 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/extensions/screen_size.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
+import '../../extensions/img_ext.dart';
+import '../../model/event.dart';
 import '../../reusable_components/buttons/date_btn_view.dart';
 import '../../reusable_components/buttons/primary_btn.dart';
 import '../../reusable_components/custom_text_field.dart';
+import '../../reusable_components/page_header_view.dart';
 import '../../utils/validations.dart';
 import '../add_event/add_event_cubit.dart';
 
 class AddEventScreen extends StatelessWidget {
-  const AddEventScreen({super.key});
+  const AddEventScreen({super.key, this.event, this.isInitialSetup = true});
+
+  final Event? event;
+  final bool isInitialSetup;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AddEventCubit(),
+      create: (context) => AddEventCubit(event),
       child: Builder(builder: (context) {
         final cubit = context.read<AddEventCubit>();
         return Scaffold(
-          body: Center(
-            child: SingleChildScrollView(
-              child: Column(
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: ListView(
                 children: [
-                  SizedBox(height: context.screenWidth * 0.4),
-                  Padding(
-                    padding: EdgeInsets.only(left: context.screenWidth * 0.08),
-                    child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Text('Add Event', style: context.titleLarge)),
+                  PageHeaderView(title: 'Add Event'),
+                  Column(
+                    children: [
+                      BlocBuilder<AddEventCubit, AddEventState>(
+                        builder: (context, state) {
+                          return _ImgView(event: event);
+                        },
+                      ),
+                      TextButton(
+                          onPressed: cubit.getImage,
+                          child: Text('Add Event Image',
+                              style: TextStyle(
+                                  fontSize: context.bodySmall.fontSize,
+                                  color: context.primary,
+                                  fontWeight: context.titleSmall.fontWeight)))
+                    ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.03),
-                  CircleAvatar(
-                    radius: context.screenWidth * 0.3,
-                    backgroundColor: context.bg3,
-                    child: Icon(
-                      Icons.person,
-                      size: context.screenWidth * 0.2,
-                      color: context.secondary,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                            hintText: 'Job Fair 123',
+                            controller: cubit.nameController,
+                            validation: Validations.name),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.01),
-                  TextButton(
-                      onPressed: cubit.addEventPicture,
-                      child: Text(
-                        'Add Event Picture',
-                        style:
-                            context.bodyMedium.copyWith(color: context.primary),
-                      )),
-                  SizedBox(height: context.screenWidth * 0.03),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.screenWidth * 0.08),
-                    child: CustomTextField(
-                      hintText: 'Event Name',
-                      controller: TextEditingController(),
-                      validation: (String value) {},
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                            hintText: 'https://maps.app.goo.gl/123',
+                            controller: cubit.locationController,
+                            validation: Validations.name),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.001),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.screenWidth * 0.08),
-                    child: CustomTextField(
-                      hintText: 'Description',
-                      controller: TextEditingController(),
-                      validation: (String value) {},
-                    ),
-                  ),
-                  SizedBox(height: context.screenWidth * 0.001),
                   Stack(
                     alignment: Alignment.centerRight,
                     children: [
                       CustomTextField(
-                          hintText: 'Start date',
+                          hintText: 'Start Date',
                           readOnly: true,
                           controller: TextEditingController(),
                           validation: Validations.none),
@@ -96,12 +94,11 @@ class AddEventScreen extends StatelessWidget {
                       )
                     ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.001),
                   Stack(
                     alignment: Alignment.centerRight,
                     children: [
                       CustomTextField(
-                          hintText: 'End date',
+                          hintText: 'End Date',
                           readOnly: true,
                           controller: TextEditingController(),
                           validation: Validations.none),
@@ -123,44 +120,119 @@ class AddEventScreen extends StatelessWidget {
                       )
                     ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.001),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.screenWidth * 0.08),
-                    child: CustomTextField(
-                      hintText: 'Upload company .xlsx',
-                      suffixIcon: IconButton(
-                          onPressed: cubit.uploadCompanyFile,
-                          icon: Icon(Icons.upload_file)),
-                      controller: TextEditingController(),
-                      validation: (String value) {},
-                    ),
+                  Stack(
+                    alignment: Alignment.centerRight,
+                    children: [
+                      CustomTextField(
+                          hintText: 'Invited Companies .xlsx',
+                          readOnly: true,
+                          controller: TextEditingController(),
+                          validation: Validations.none),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            BlocBuilder<AddEventCubit, AddEventState>(
+                              builder: (context, state) {
+                                return event?.didInviteCompanies == null
+                                    ? Text('none', style: context.bodyMedium)
+                                    : Icon(CupertinoIcons.doc_checkmark,
+                                        color: context.textColor1);
+                              },
+                            ),
+                            IconButton(
+                                onPressed: cubit.uploadCompanyFile,
+                                icon: Icon(CupertinoIcons.square_arrow_up_fill,
+                                    color: context.primary))
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.001),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: context.screenWidth * 0.08),
-                    child: CustomTextField(
-                      suffixIcon: IconButton(
-                          onPressed: cubit.uploadVisitorsFile,
-                          icon: Icon(Icons.upload_file)),
-                      hintText: 'Upload visitors .xlsx',
-                      controller: TextEditingController(),
-                      validation: (String value) {},
-                    ),
+                  Stack(
+                    alignment: Alignment.centerRight,
+                    children: [
+                      CustomTextField(
+                          hintText: 'Invited Users .xlsx',
+                          readOnly: true,
+                          controller: TextEditingController(),
+                          validation: Validations.none),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            BlocBuilder<AddEventCubit, AddEventState>(
+                              builder: (context, state) {
+                                return event?.didInviteUsers == null
+                                    ? Text('none', style: context.bodyMedium)
+                                    : Icon(CupertinoIcons.doc_checkmark,
+                                        color: context.textColor1);
+                              },
+                            ),
+                            IconButton(
+                                onPressed: cubit.uploadVisitorsFile,
+                                icon: Icon(CupertinoIcons.square_arrow_up_fill,
+                                    color: context.primary))
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  SizedBox(height: context.screenWidth * 0.01),
+                  SizedBox(height: 16),
                   PrimaryBtn(
-                    callback: cubit.createEvent(context),
-                    title: 'Create Event',
-                  ),
-                  SizedBox(height: context.screenWidth * 0.01),
+                      callback: () => cubit.createEvent(context),
+                      title: isInitialSetup ? 'Save' : 'Update')
                 ],
               ),
             ),
           ),
         );
       }),
+    );
+  }
+}
+
+class _ImgView extends StatelessWidget {
+  const _ImgView({required this.event});
+
+  final Event? event;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  // border: Border.all(color: context.primary, width: 2),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      elevation: 5,
+                      child: event?.imgUrl == null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(32),
+                              child: Image(
+                                  image: Img.logoPurple, fit: BoxFit.cover))
+                          : Image.network(event!.imgUrl!, fit: BoxFit.cover)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

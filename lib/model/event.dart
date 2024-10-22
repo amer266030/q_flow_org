@@ -3,6 +3,9 @@ class Event {
   String? organizerId;
   String? name;
   String? location;
+  String? imgUrl;
+  bool? didInviteCompanies;
+  bool? didInviteUsers;
   String? startDate;
   String? endDate;
 
@@ -11,6 +14,9 @@ class Event {
     this.organizerId,
     this.name,
     this.location,
+    this.imgUrl,
+    this.didInviteCompanies,
+    this.didInviteUsers,
     this.startDate,
     this.endDate,
   });
