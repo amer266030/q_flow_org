@@ -1,0 +1,69 @@
+name: q_flow_organizer
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  bootstrap_icons: ^1.11.3
+  easy_localization: ^3.0.7
+  flutter_bloc: ^8.1.6
+  intl: ^0.19.0
+  shared_preferences: ^2.3.2
+  supabase_flutter: ^2.8.0
+  image_picker: ^1.1.2
+  animated_snack_bar: ^0.4.0
+  flutter_rating_stars: ^1.1.0
+  pinput: ^5.0.0
+  fl_chart: ^0.69.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_launcher_icons: "^0.14.1"
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo/logo_purple.jpg"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/logo/logo.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/logo/
+    - assets/onboarding/
+    - assets/translations/
+    - assets/avatar/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 100
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 200
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 300
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 700
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 800
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+          weight: 900
+
