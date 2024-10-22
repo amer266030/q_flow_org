@@ -24,6 +24,7 @@ class AppThemeCubit extends Cubit<ThemeMode> {
       } else if (savedTheme == ThemeMode.dark.toString()) {
         emit(ThemeMode.dark);
       } else {
+        await prefs.setString('theme', ThemeMode.system.toString());
         emit(ThemeMode.system);
       }
     }

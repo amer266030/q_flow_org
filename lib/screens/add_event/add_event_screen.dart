@@ -8,10 +8,10 @@ import '../../reusable_components/buttons/date_btn_view.dart';
 import '../../reusable_components/buttons/primary_btn.dart';
 import '../../reusable_components/custom_text_field.dart';
 import '../../utils/validations.dart';
-import 'cubit/add_event_cubit.dart';
+import '../add_event/add_event_cubit.dart';
 
-class AddEvent extends StatelessWidget {
-  const AddEvent({super.key});
+class AddEventScreen extends StatelessWidget {
+  const AddEventScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

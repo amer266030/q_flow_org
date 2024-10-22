@@ -97,7 +97,7 @@ class _FormView extends StatelessWidget {
           children: [
             Expanded(
                 child: PrimaryBtn(
-                    callback: () => cubit.navigateToHome(context),
+                    callback: () => cubit.navigateToEvents(context),
                     title: 'Start'))
           ],
         ),
