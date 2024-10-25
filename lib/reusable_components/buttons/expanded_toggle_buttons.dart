@@ -95,6 +95,9 @@ class _ItemView extends StatelessWidget {
                 child: Text(
                   str,
                   style: TextStyle(
+                    fontWeight: isSelected
+                        ? context.titleSmall.fontWeight
+                        : context.bodyMedium.fontWeight,
                     fontSize: context.bodyMedium.fontSize,
                     color: isSelected ? Colors.white : context.textColor3,
                   ),

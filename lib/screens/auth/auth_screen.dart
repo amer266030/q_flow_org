@@ -24,7 +24,16 @@ class AuthScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _ImgView(),
+                  Padding(
+                    padding: EdgeInsets.all(4),
+                    child: ClipOval(
+                        child: AspectRatio(
+                      aspectRatio: 2.3,
+                      child: Image(
+                        image: Img.logo,
+                      ),
+                    )),
+                  ),
                   PageHeaderView(title: 'Login'),
                   Expanded(
                     child: ListView(
@@ -39,42 +48,6 @@ class AuthScreen extends StatelessWidget {
           ),
         );
       }),
-    );
-  }
-}
-
-class _ImgView extends StatelessWidget {
-  const _ImgView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // border: Border.all(color: context.primary, width: 2),
-              ),
-              width: 140,
-              height: 140,
-              child: Padding(
-                padding: EdgeInsets.all(4),
-                child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    elevation: 5,
-                    child: ClipOval(
-                        child: Image(
-                            image: Img.logoTurquoise, fit: BoxFit.cover))),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }

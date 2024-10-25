@@ -126,7 +126,7 @@ class _PageHeaderView extends StatelessWidget {
             ],
           ),
         ),
-        Divider(color: context.textColor3, indent: 32, endIndent: 32),
+        Divider(color: context.bg2, indent: 32, endIndent: 32),
       ],
     );
   }
@@ -145,10 +145,10 @@ class _EventItemView extends StatelessWidget {
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: context.textColor1.withOpacity(0.5),
+              color: context.textColor1.withOpacity(0.1),
               blurRadius: 2,
-              spreadRadius: 2,
-              offset: Offset(4, 4),
+              spreadRadius: 1,
+              offset: Offset(2, 2),
             )
           ],
         ),

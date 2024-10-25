@@ -26,6 +26,7 @@ class AddEventScreen extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.read<AddEventCubit>();
         return Scaffold(
+          appBar: AppBar(),
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24),

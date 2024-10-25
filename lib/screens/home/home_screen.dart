@@ -1,13 +1,11 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/extensions/screen_size.dart';
-import 'package:q_flow_organizer/reusable_components/animated_snack_bar.dart';
-import 'package:q_flow_organizer/screens/home/charts/line_chart.dart';
+import 'package:q_flow_organizer/model/enums/reports.dart';
+import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
+import 'package:q_flow_organizer/screens/home/subviews/report_containtet.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
-
 import '../../extensions/img_ext.dart';
 import 'home_cubit.dart';
 
@@ -26,45 +24,42 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               child: ListView(
                 children: [
-                  _HeaderView(positionInQueue: null),
-                  Divider(color: context.textColor3),
+                  _HeaderView(
+                    positionInQueue: null,
+                    onBack: () => cubit.navigateBack(context),
+                  ),
+                  Divider(color: context.bg2),
                   _SectionHeaderView(title: 'Overall Stats'),
                   _StatCardsView(
                     numCompanies: 100,
                     numVisitors: 1000,
                     numInterviews: 2500,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Interviews peak hours',
-                              style: TextStyle(
-                                fontSize: context.bodyLarge.fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  _SectionHeaderView(title: 'Event Reports'),
+                  BlocBuilder<HomeCubit, HomeState>(
+                    builder: (context, state) {
+                      return Column(
+                        children: [
+                          ExpandedToggleButtons(
+                            currentIndex:
+                                Reports.values.indexOf(cubit.selectedStatus),
+                            tabs: Reports.values.map((r) => r.value).toList(),
+                            callback: (int value) =>
+                                cubit.setSelectedStatus(value),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 24),
+                            child: ReportContent(
+                              context: context,
+                              cubit: cubit,
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: AspectRatio(
-                                aspectRatio: 1.5,
-                                child: InterviewsLineChart(
-                                    textColor: context.textColor1,
-                                    lineColor: context.primary,
-                                    screenWidth: context.screenWidth),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          )
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
@@ -75,6 +70,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
 
 class _StatCardsView extends StatelessWidget {
   const _StatCardsView({
@@ -206,14 +202,17 @@ class _StatCardsView extends StatelessWidget {
 }
 
 class _HeaderView extends StatelessWidget {
-  const _HeaderView({this.positionInQueue});
+  const _HeaderView({this.positionInQueue, required this.onBack});
 
   final int? positionInQueue;
+  final Function()? onBack;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
+        IconButton(
+            onPressed: onBack, icon: Icon(Icons.arrow_back_ios_new_rounded)),
         Expanded(
             child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -268,7 +267,11 @@ class _SectionHeaderView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: context.bodyLarge),
+          Text(title,
+              style: TextStyle(
+                fontSize: context.bodyLarge.fontSize,
+                fontWeight: context.titleSmall.fontWeight,
+              )),
           if (ctaStr != null)
             TextButton(
               onPressed: callback!,
