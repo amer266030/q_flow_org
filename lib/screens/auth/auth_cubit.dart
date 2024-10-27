@@ -7,6 +7,7 @@ import '../events/events_screen.dart';
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
+  AuthState? previousState;
   AuthCubit() : super(AuthInitial());
 
   var isOtp = false;
@@ -17,29 +18,40 @@ class AuthCubit extends Cubit<AuthState> {
     emitUpdate();
   }
 
-  Future signIn(BuildContext context) async {
+  sendOTP(BuildContext context) async {
     try {
       emitLoading();
-      var response = await SupabaseAuth.signIn(emailController.text);
-      print(response.toString());
+      await SupabaseAuth.sendOTP(emailController.text);
+      toggleIsOtp();
+    } catch (e) {
+      emitError('The provided email could not be found!');
+    }
+  }
+
+  verifyOTP(BuildContext context, int otp) async {
+    var stringOtp = '$otp'.padLeft(6, '0');
+    try {
+      emitLoading();
+      await SupabaseAuth.verifyOTP(emailController.text, stringOtp);
       emitUpdate();
       if (context.mounted) {
         navigateToEvents(context);
       }
     } catch (e) {
-      print(e.toString());
-      emitUpdate();
+      emitError('Could not verify OTP');
     }
-  }
-
-  verifyOTP(BuildContext context, int otp) async {
-    print('This was called');
-    navigateToEvents(context);
   }
 
   navigateToEvents(BuildContext context) => Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => EventsScreen()));
 
+  @override
+  void emit(AuthState state) {
+    previousState = this.state;
+    super.emit(state);
+  }
+
   emitLoading() => emit(LoadingState());
   emitUpdate() => emit(UpdateUIState());
+  emitError(String msg) => emit(ErrorState(msg));
 }

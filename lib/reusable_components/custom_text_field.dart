@@ -13,6 +13,7 @@ class CustomTextField extends StatelessWidget {
     required this.validation,
     this.onChanged,
     this.readOnly = false,
+    this.keyboardType = TextInputType.text,
     this.isObscure = false,
   });
   final String hintText;
@@ -23,6 +24,7 @@ class CustomTextField extends StatelessWidget {
   final Function(String value) validation;
   final bool readOnly;
   final bool isObscure;
+  final TextInputType keyboardType;
   final Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
@@ -30,6 +32,7 @@ class CustomTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         style: context.bodyLarge,
+        keyboardType: keyboardType,
         readOnly: readOnly,
         obscureText: isObscure,
         maxLines: max,

@@ -5,7 +5,7 @@ import 'client/supabase_mgr.dart';
 class SupabaseAuth {
   static final SupabaseClient supabase = SupabaseMgr.shared.supabase;
 
-  static Future signIn(String email) async {
+  static Future sendOTP(String email) async {
     try {
       // Check profile table
       final profileCheck = await supabase
@@ -26,6 +26,22 @@ class SupabaseAuth {
     } on PostgrestException catch (_) {
       rethrow;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future verifyOTP(String email, String otp) async {
+    print(email);
+    print(otp);
+    try {
+      final response = await supabase.auth.verifyOTP(
+        email: email,
+        token: otp,
+        type: OtpType.email,
+      );
+      return response;
+    } catch (e) {
+      print('Error verifying OTP: $e');
       rethrow;
     }
   }

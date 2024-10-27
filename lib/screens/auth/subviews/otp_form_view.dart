@@ -81,7 +81,7 @@ class OtpFormView extends StatelessWidget {
                     submittedPinTheme: submittedPinTheme,
                     length: 6,
                     showCursor: true,
-                    onCompleted: (pin) => (),
+                    onCompleted: (pin) => verifyOTP(int.tryParse(pin) ?? -1),
                     // onCompleted: (pin) => verifyOTP(int.tryParse(pin) ?? -1),
                   ),
                 ),

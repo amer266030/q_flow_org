@@ -21,6 +21,7 @@ class LoginFormView extends StatelessWidget {
         CustomTextField(
             hintText: 'Email',
             controller: controller,
+            keyboardType: TextInputType.emailAddress,
             validation: Validations.email),
         const SizedBox(height: 32),
         Row(
