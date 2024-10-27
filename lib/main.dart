@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:q_flow_organizer/screens/auth/auth_screen.dart';
+import 'package:q_flow_organizer/screens/events/events_screen.dart';
+import 'package:q_flow_organizer/screens/home/home_screen.dart';
 import 'package:q_flow_organizer/supabase/client/supabase_mgr.dart';
 import 'package:q_flow_organizer/theme_data/app_theme_cubit.dart';
 import 'package:q_flow_organizer/theme_data/app_themes.dart';
@@ -41,7 +43,7 @@ class MainApp extends StatelessWidget {
                   context.supportedLocales, // From EasyLocalization
               localizationsDelegates:
                   context.localizationDelegates, // From EasyLocalization
-              home: AuthScreen());
+              home: EventsScreen());
         },
       ),
     );

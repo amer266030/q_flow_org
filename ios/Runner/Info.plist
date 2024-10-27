@@ -45,12 +45,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-<<<<<<< HEAD
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>We need access to your photo library to select pictures.</string>
-=======
 	<key>NSCameraUsageDescription</key>
-<string>Camera permission is required for barcode scanning.</string>
->>>>>>> origin/qr
+    <string>Camera permission is required for barcode scanning.</string>
 </dict>
 </plist>
