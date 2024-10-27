@@ -1,55 +1,52 @@
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
 
-import '../model/excel_model.dart';
 import 'dart:io';
 
 class ExcelUtil {
-  Future<List<ExcelModel>> importExcel() async {
+  static Future<List<(String, String)>> importExcel() async {
     var result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['xlsx'],
     );
 
-    List<ExcelModel> companies = [];
-
-    List<String> names = [];
-    List<String> emails = [];
+    List<(String, String)> arr = [];
 
     try {
-      late dynamic numFormat;
       if (result != null) {
         var bytes = File(result.files.single.path!).readAsBytesSync();
         var excel = Excel.decodeBytes(bytes);
         for (var table in excel.tables.keys) {
           for (var row in excel.tables[table]?.rows ?? []) {
+            var name = '';
+            var email = '';
             for (var cell in row) {
               final value = cell?.value;
-              numFormat = cell?.cellStyle?.numberFormat ?? NumFormat.standard_0;
               if (cell?.rowIndex != 0) {
                 switch (value) {
                   case null:
-                    throw Exception('Empty Cell');
+                  // throw Exception('Empty Cell');
                   case TextCellValue():
                     if (cell?.columnIndex == 0) {
-                      names.add('$value');
-                    } else {
-                      emails.add('$value');
+                      name = '$value';
+                    }
+                    if (cell?.columnIndex == 1) {
+                      email = '$value';
                     }
                   default:
+                    name = '';
+                    email = '';
                 }
               }
             }
-          }
-
-          for (var email in emails) {
-            companies.add(ExcelModel.fromJson(
-                {'name': names[emails.indexOf(email)], 'email': email}));
+            if (name.isNotEmpty || email.isNotEmpty) {
+              arr.add((name, email));
+            }
           }
         }
-        return companies;
+        return arr;
       } else {
-        return [];
+        throw Exception('Could not read excel file');
       }
     } catch (e) {
       return [];

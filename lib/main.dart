@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_flow_organizer/screens/add_event/add_event_screen.dart';
 import 'package:q_flow_organizer/screens/auth/auth_screen.dart';
 import 'package:q_flow_organizer/theme_data/app_theme_cubit.dart';
 import 'package:q_flow_organizer/theme_data/app_themes.dart';
@@ -38,7 +39,7 @@ class MainApp extends StatelessWidget {
                   context.supportedLocales, // From EasyLocalization
               localizationsDelegates:
                   context.localizationDelegates, // From EasyLocalization
-              home: AuthScreen());
+              home: AddEventScreen());
         },
       ),
     );

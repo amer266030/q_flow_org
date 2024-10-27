@@ -3,8 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:q_flow_organizer/utils/excel_util.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../model/event/event.dart';
+import '../../model/event/event_invited_company_email.dart';
+import '../../model/event/event_invited_visitor_email.dart';
 
 part 'add_event_state.dart';
 
@@ -12,6 +16,8 @@ class AddEventCubit extends Cubit<AddEventState> {
   AddEventCubit(Event? event) : super(AddEventInitial()) {
     initialLoad(event);
   }
+
+  var eventId = Uuid().v4().toString();
 
   final nameController = TextEditingController();
   final locationController = TextEditingController();
@@ -21,6 +27,9 @@ class AddEventCubit extends Cubit<AddEventState> {
   File? companiesFile;
   File? usersFile;
 
+  List<EventInvitedVisitorEmail> visitorEmails = [];
+  List<EventInvitedCompanyEmail> companyEmails = [];
+
   initialLoad(Event? event) {
     nameController.text = event?.name ?? '';
     locationController.text = event?.location ?? '';
@@ -29,6 +38,9 @@ class AddEventCubit extends Cubit<AddEventState> {
     }
     if (event?.endDate != null) {
       endDate = DateTime.parse(event!.endDate!);
+    }
+    if (event?.id != null) {
+      eventId = event!.id!;
     }
   }
 
@@ -48,13 +60,23 @@ class AddEventCubit extends Cubit<AddEventState> {
     emitUpdate();
   }
 
-  uploadCompanyFile() {
-    // Excel Sheet upload
+  uploadCompanyFile() async {
+    var companiesArr = await ExcelUtil.importExcel();
+    for (var company in companiesArr) {
+      var newItem = EventInvitedCompanyEmail(
+          eventId: eventId, companyName: company.$1, email: company.$2);
+      companyEmails.add(newItem);
+    }
     emitUpdate();
   }
 
-  uploadVisitorsFile() {
-    // Excel Sheet upload
+  uploadVisitorsFile() async {
+    var visitorsArr = await ExcelUtil.importExcel();
+    for (var visitor in visitorsArr) {
+      var newItem = EventInvitedVisitorEmail(
+          eventId: eventId, visitorName: visitor.$1, email: visitor.$2);
+      visitorEmails.add(newItem);
+    }
     emitUpdate();
   }
 

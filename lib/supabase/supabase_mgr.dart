@@ -9,7 +9,6 @@ class SupabaseMgr {
 
   static SupabaseMgr get shared => _instance;
 
-  // Initialize method to configure the Supabase client asynchronously
   Future<void> initialize() async {
     supabase = await Supabase.initialize(
       url: '',

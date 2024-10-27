@@ -1,3 +1,5 @@
+// Created after Auth
+
 class EventInvitedCompany {
   String? eventId;
   String? companyId;

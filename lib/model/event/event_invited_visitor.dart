@@ -1,3 +1,5 @@
+// Created after Auth
+
 class EventInvitedVisitor {
   String? eventId;
   String? visitorId;
