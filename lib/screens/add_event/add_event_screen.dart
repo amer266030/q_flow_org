@@ -5,7 +5,7 @@ import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
 import '../../extensions/img_ext.dart';
-import '../../model/event.dart';
+import '../../model/event/event.dart';
 import '../../reusable_components/buttons/date_btn_view.dart';
 import '../../reusable_components/buttons/primary_btn.dart';
 import '../../reusable_components/custom_text_field.dart';

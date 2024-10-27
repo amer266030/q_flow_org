@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../model/event.dart';
+import '../../model/event/event.dart';
 
 part 'add_event_state.dart';
 

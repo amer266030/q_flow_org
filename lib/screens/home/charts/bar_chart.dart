@@ -56,8 +56,7 @@ class CompanyBarChart extends StatelessWidget {
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           return Transform.rotate(
-                            angle:
-                                -0.485398, // Rotate 45 degrees counter-clockwise
+                            angle: -0.45,
                             child: Text(
                               titles[value.toInt()],
                               style: TextStyle(
@@ -77,7 +76,17 @@ class CompanyBarChart extends StatelessWidget {
                       ),
                     ),
                   ),
-                  borderData: FlBorderData(show: false),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border(
+                      bottom: BorderSide(
+                          color: Colors.black.withOpacity(0.1), width: 2),
+                      left: BorderSide(
+                          color: Colors.black.withOpacity(0.1), width: 2),
+                      right: const BorderSide(color: Colors.transparent),
+                      top: const BorderSide(color: Colors.transparent),
+                    ),
+                  ),
                   barGroups: barGroups,
                   gridData: const FlGridData(show: false),
                 ),

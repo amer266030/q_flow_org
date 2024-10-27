@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/model/enums/reports.dart';
 import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
-import 'package:q_flow_organizer/screens/home/subviews/report_containtet.dart';
+import 'package:q_flow_organizer/screens/home/subviews/report_content.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
@@ -70,7 +70,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _StatCardsView extends StatelessWidget {
   const _StatCardsView({

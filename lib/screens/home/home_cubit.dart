@@ -28,7 +28,7 @@ class HomeCubit extends Cubit<HomeState> {
       5,
       (index) => Company(
         id: '${index + 1}',
-        name: 'ABC Company ${index + 1}', // Use index for unique names
+        name: 'ABC Company ${index + 1}',
         description: 'ABC Company specializes in providing tech solutions.',
         companySize: CompanySize.oneHundredTo200,
         establishedYear: 2015,
@@ -39,8 +39,8 @@ class HomeCubit extends Cubit<HomeState> {
       5,
       (index) => Visitor(
         id: '${index + 1}',
-        fName: 'John ', // Unique first names
-        lName: 'Doe ${index + 1}', // Unique last names
+        fName: 'John ',
+        lName: 'Doe ${index + 1}',
       ),
     );
 

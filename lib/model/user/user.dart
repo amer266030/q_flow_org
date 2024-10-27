@@ -3,7 +3,6 @@ class User {
   String? email;
   String? phone;
   String? role;
-  String? password;
   String? createdAt;
   String? externalId;
 
@@ -12,7 +11,6 @@ class User {
     this.email,
     this.phone,
     this.role,
-    this.password,
     this.createdAt,
     this.externalId,
   });
