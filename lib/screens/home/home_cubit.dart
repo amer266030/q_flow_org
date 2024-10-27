@@ -1,4 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/model/enums/company_size.dart';
 import 'package:q_flow_organizer/model/enums/reports.dart';
@@ -76,6 +79,18 @@ class HomeCubit extends Cubit<HomeState> {
         builder: (context) => VisitorRatingScreen(
               visitor: visitor,
             )));
+  }
+
+  Future scanQR() async {
+    String scan;
+    try {
+      scan = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', false, ScanMode.QR);
+      print(scan);
+    } on PlatformException {
+      scan = 'Failed to get platform version.';
+    }
+    emitUpdate();
   }
 
   navigateBack(BuildContext context) => Navigator.of(context).pop();
