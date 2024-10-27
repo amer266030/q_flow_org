@@ -4,10 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:q_flow_organizer/extensions/img_ext.dart';
 import 'package:q_flow_organizer/screens/events/events_cubit.dart';
+import 'package:q_flow_organizer/screens/events/subviews/event_item_view.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
 import '../../reusable_components/buttons/floating_button_view.dart';
+import '../../reusable_components/dialogs/error_dialog.dart';
+import '../../reusable_components/dialogs/loading_dialog.dart';
 
 class EventsScreen extends StatelessWidget {
   const EventsScreen({super.key});
@@ -18,47 +21,69 @@ class EventsScreen extends StatelessWidget {
       create: (context) => EventsCubit(context),
       child: Builder(builder: (context) {
         final cubit = context.read<EventsCubit>();
-        return Scaffold(
-          floatingActionButtonLocation: ExpandableFab.location,
-          floatingActionButton: BlocBuilder<EventsCubit, EventsState>(
-            builder: (context, state) {
-              return FloatingButtonView(
-                isDarkMode: cubit.isDarkMode,
-                isEnglish: cubit.isEnglish,
-                languageToggle: () => cubit.toggleLanguage(context),
-                themeToggle: () => cubit.toggleDarkMode(context),
-                logout: () => cubit.logout(context),
-              );
-            },
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _PageHeaderView(),
-                    SizedBox(height: 16),
-                    _SectionHeaderView(
-                        callback: () => cubit.navigateToAddEvent(context)),
-                    SizedBox(height: 16),
-                    AspectRatio(
-                      aspectRatio: 1,
-                      child: Swiper(
-                        itemBuilder: (BuildContext context, int index) {
-                          return InkWell(
-                            onTap: () => cubit.navigateToHome(context),
-                            child: _EventItemView(),
-                          );
-                        },
-                        itemCount: 3,
-                        viewportFraction: 0.8,
-                        scale: 0.9,
+        return BlocListener<EventsCubit, EventsState>(
+          listener: (context, state) async {
+            if (cubit.previousState is LoadingState) {
+              await Navigator.of(context).maybePop();
+            }
+            if (state is LoadingState && cubit.previousState is! LoadingState) {
+              showLoadingDialog(context);
+            }
+            if (state is ErrorState) {
+              showErrorDialog(context, state.msg);
+            }
+          },
+          child: Scaffold(
+            floatingActionButtonLocation: ExpandableFab.location,
+            floatingActionButton: BlocBuilder<EventsCubit, EventsState>(
+              builder: (context, state) {
+                return FloatingButtonView(
+                  isDarkMode: cubit.isDarkMode,
+                  isEnglish: cubit.isEnglish,
+                  languageToggle: () => cubit.toggleLanguage(context),
+                  themeToggle: () => cubit.toggleDarkMode(context),
+                  logout: () => cubit.logout(context),
+                );
+              },
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _PageHeaderView(),
+                      SizedBox(height: 16),
+                      _SectionHeaderView(
+                          callback: () => cubit.navigateToAddEvent(context)),
+                      SizedBox(height: 16),
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: BlocBuilder<EventsCubit, EventsState>(
+                          builder: (context, state) {
+                            if (cubit.events.isEmpty) {
+                              return Text('');
+                            }
+                            return Swiper(
+                              key: ValueKey(cubit.events.length),
+                              itemBuilder: (BuildContext context, int index) {
+                                final event = cubit.events[index];
+                                return InkWell(
+                                  onTap: () => cubit.navigateToHome(context),
+                                  child: EventItemView(event: event),
+                                );
+                              },
+                              itemCount: cubit.events.length,
+                              viewportFraction: 0.8,
+                              scale: 0.9,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -128,72 +153,6 @@ class _PageHeaderView extends StatelessWidget {
         ),
         Divider(color: context.bg2, indent: 32, endIndent: 32),
       ],
-    );
-  }
-}
-
-class _EventItemView extends StatelessWidget {
-  const _EventItemView();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.bg3,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: context.textColor1.withOpacity(0.1),
-              blurRadius: 2,
-              spreadRadius: 1,
-              offset: Offset(2, 2),
-            )
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
-                  child: Image(image: Img.logoPurple, fit: BoxFit.fill),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      '2024 Job Fair',
-                      style: TextStyle(
-                        fontSize: context.bodyLarge.fontSize,
-                        fontWeight: FontWeight.bold,
-                        color: context.textColor1,
-                      ),
-                      softWrap: true,
-                      maxLines: 2,
-                    ),
-                    Text(
-                      '04/01/2024 - 06/01/2024',
-                      style: TextStyle(
-                        fontSize: context.bodySmall.fontSize,
-                        color: context.textColor3,
-                      ),
-                      softWrap: true,
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

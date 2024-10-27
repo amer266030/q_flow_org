@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
+import 'package:q_flow_organizer/screens/auth/network_functions.dart';
 import 'package:q_flow_organizer/screens/auth/subviews/login_form_view.dart';
 import 'package:q_flow_organizer/screens/auth/subviews/otp_form_view.dart';
 
