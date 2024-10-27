@@ -4,9 +4,9 @@ extension ReportsExtension on Reports {
   String get value {
     switch (this) {
       case Reports.majors:
-        return 'Majors ';
+        return 'Majors';
       case Reports.company:
-        return 'company';
+        return 'Company';
       case Reports.rating:
         return 'Rating';
       case Reports.times:

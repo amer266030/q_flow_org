@@ -1,12 +1,14 @@
-class User {
+import '../enums/user_role.dart';
+
+class Profile {
   String? id;
   String? email;
   String? phone;
-  String? role;
+  UserRole? role;
   String? createdAt;
   String? externalId;
 
-  User({
+  Profile({
     this.id,
     this.email,
     this.phone,
@@ -15,12 +17,14 @@ class User {
     this.externalId,
   });
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory Profile.fromJson(Map<String, dynamic> json) {
+    return Profile(
       id: json['id'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,
-      role: json['role'] as String?,
+      role: json['role'] != null
+          ? UserRoleExtension.fromString(json['role'] as String?)
+          : null,
       createdAt: json['created_at'] as String?,
       externalId: json['external_id'] as String?,
     );
@@ -31,7 +35,7 @@ class User {
       'id': id,
       'email': email,
       'phone': phone,
-      'role': role,
+      'role': role?.value,
       'created_at': createdAt,
       'external_id': externalId,
     };
