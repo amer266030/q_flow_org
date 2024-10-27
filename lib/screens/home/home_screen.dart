@@ -27,6 +27,7 @@ class HomeScreen extends StatelessWidget {
                   _HeaderView(
                     positionInQueue: null,
                     onBack: () => cubit.navigateBack(context),
+                    onScan: () => cubit.scanQR(),
                   ),
                   Divider(color: context.bg2),
                   _SectionHeaderView(title: 'Overall Stats'),
@@ -201,11 +202,15 @@ class _StatCardsView extends StatelessWidget {
 }
 
 class _HeaderView extends StatelessWidget {
-  const _HeaderView({this.positionInQueue, required this.onBack});
+  const _HeaderView({
+    this.positionInQueue,
+    required this.onBack,
+    required this.onScan,
+  });
 
   final int? positionInQueue;
   final Function()? onBack;
-
+  final Function()? onScan;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -245,7 +250,12 @@ class _HeaderView extends StatelessWidget {
         ),
         Expanded(
           child: IconButton(
-              onPressed: () => (), icon: Icon(CupertinoIcons.qrcode, size: 40)),
+              onPressed: onScan,
+              icon: Icon(
+                CupertinoIcons.qrcode_viewfinder,
+                size: 40,
+                color: context.textColor1,
+              )),
         )
       ],
     );
