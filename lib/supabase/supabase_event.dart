@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/event/event_invited_company_email.dart';
 import '../model/event/event_invited_visitor_email.dart';
+import '../utils/img_converter.dart';
 import 'client/supabase_mgr.dart';
 
 class SupabaseEvent {
@@ -10,6 +13,7 @@ class SupabaseEvent {
   static final String eventTableKey = 'event';
   static final String companyTableKey = 'event_invited_company_email';
   static final String visitorTableKey = 'event_invited_visitor_email';
+  static final String bucketKey = 'event_logo';
 
   static Future<List<Event>>? fetchEvents() async {
     try {
@@ -27,19 +31,27 @@ class SupabaseEvent {
     }
   }
 
-  static Future createEvent(Event event) async {
+  static Future createEvent(
+      {required Event event, required File? imageFile}) async {
     try {
+      if (imageFile != null) {
+        event.imgUrl = await uploadImage(imageFile, event.name ?? '1234');
+      }
       final response = await supabase
           .from(eventTableKey)
           .insert(event.toJson())
           .select()
           .single();
+      print(response);
       return response;
     } on AuthException catch (_) {
+      print('AUTH EXCEPTION');
       rethrow;
-    } on PostgrestException catch (_) {
+    } on PostgrestException catch (e) {
+      print(e.toString());
       rethrow;
     } catch (e) {
+      print(e.toString());
       rethrow;
     }
   }
@@ -71,6 +83,28 @@ class SupabaseEvent {
     } on PostgrestException catch (_) {
       rethrow;
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<String?> uploadImage(File imageFile, String itemName) async {
+    try {
+      final fileBytes = await ImgConverter.fileImgToBytes(imageFile);
+      final fileName = '$itemName.png';
+
+      await supabase.storage.from(bucketKey).uploadBinary(fileName, fileBytes,
+          fileOptions: FileOptions(upsert: true));
+
+      final publicUrl = supabase.storage.from(bucketKey).getPublicUrl(fileName);
+
+      return publicUrl;
+    } on AuthException catch (_) {
+      rethrow;
+    } on PostgrestException catch (e) {
+      print('Postgrest error: ${e.message}');
+      rethrow;
+    } catch (e) {
+      print('General error: $e');
       rethrow;
     }
   }

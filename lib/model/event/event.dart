@@ -37,7 +37,6 @@ class Event {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'organizer_id': organizerId,
       'name': name,
       'location': location,

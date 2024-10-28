@@ -19,8 +19,8 @@ class DateBtnView extends StatelessWidget {
         DateTime? pickedDate = await showDatePicker(
           context: context,
           initialDate: date,
-          firstDate: DateTime(1970),
-          lastDate: DateTime.now(),
+          firstDate: DateTime.now().add(Duration(days: -120)),
+          lastDate: DateTime.now().add(Duration(days: 720)),
           builder: (context, child) {
             ThemeData datePickerTheme;
             if (brightness == Brightness.light) {

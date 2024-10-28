@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/model/enums/reports.dart';
+import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
 import 'package:q_flow_organizer/screens/home/subviews/report_content.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
@@ -10,7 +11,9 @@ import '../../extensions/img_ext.dart';
 import 'home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.event});
+
+  final Event event;
 
   @override
   Widget build(BuildContext context) {

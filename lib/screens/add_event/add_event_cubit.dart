@@ -13,6 +13,7 @@ import '../../model/event/event_invited_visitor_email.dart';
 part 'add_event_state.dart';
 
 class AddEventCubit extends Cubit<AddEventState> {
+  AddEventState? previousState;
   AddEventCubit(Event? event) : super(AddEventInitial()) {
     initialLoad(event);
   }
@@ -80,11 +81,13 @@ class AddEventCubit extends Cubit<AddEventState> {
     emitUpdate();
   }
 
-  createEvent(BuildContext context) {
-    Navigator.of(context).pop();
-    emitUpdate();
+  @override
+  void emit(AddEventState state) {
+    previousState = this.state;
+    super.emit(state);
   }
 
   void emitLoading() => emit(LoadingState());
   void emitUpdate() => emit(UpdateUIState());
+  void emitError(String msg) => emit(ErrorState(msg));
 }
