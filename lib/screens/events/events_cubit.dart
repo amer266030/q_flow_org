@@ -64,7 +64,7 @@ class EventsCubit extends Cubit<EventsState> {
       .push(MaterialPageRoute(builder: (context) => AddEventScreen()));
 
   navigateToHome(BuildContext context, Event event) => Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => HomeScreen(event: event)));
+      .push(MaterialPageRoute(builder: (context) => HomeScreen(event: event, event2: event,)));
 
   logout(BuildContext context) => Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));

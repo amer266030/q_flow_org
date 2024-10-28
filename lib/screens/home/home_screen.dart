@@ -11,8 +11,9 @@ import '../../model/event/event.dart';
 import 'home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.event});
+  const HomeScreen({super.key, required this.event, required this.event2});
   final Event event;
+  final Event event2;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -29,7 +30,8 @@ class HomeScreen extends StatelessWidget {
                     positionInQueue: null,
                     onBack: () => cubit.navigateBack(context),
                     onScan: () => cubit.scanQR(),
-                    event: event,
+                    eName: event,
+                    eDate: event2,
                   ),
                   Divider(color: context.bg2),
                   _SectionHeaderView(title: 'Overall Stats'),
@@ -208,10 +210,12 @@ class _HeaderView extends StatelessWidget {
     this.positionInQueue,
     required this.onBack,
     required this.onScan,
-    required this.event,
+    required this.eName,
+    required this.eDate,
   });
 
-  final Event event;
+  final Event eName;
+  final Event eDate;
   final int? positionInQueue;
   final Function()? onBack;
   final Function()? onScan;
@@ -233,7 +237,7 @@ class _HeaderView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(event.name ?? '',
+              Text(eName.name ?? '',
                   style: context.bodyLarge, maxLines: 1, softWrap: true),
               SizedBox(height: 4),
               Row(
@@ -245,7 +249,7 @@ class _HeaderView extends StatelessWidget {
                     size: context.titleSmall.fontSize,
                   ),
                   SizedBox(width: 4),
-                  Text('01/01/2024 - 04/01/2024',
+                  Text('${eDate.startDate} - ${eDate.endDate}',
                       style: context.bodySmall, maxLines: 1, softWrap: true),
                 ],
               ),
