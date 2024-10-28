@@ -7,11 +7,12 @@ import 'package:q_flow_organizer/screens/home/subviews/report_content.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
+import '../../model/event/event.dart';
 import 'home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
+  const HomeScreen({super.key, required this.event});
+  final Event event;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -28,6 +29,7 @@ class HomeScreen extends StatelessWidget {
                     positionInQueue: null,
                     onBack: () => cubit.navigateBack(context),
                     onScan: () => cubit.scanQR(),
+                    event: event,
                   ),
                   Divider(color: context.bg2),
                   _SectionHeaderView(title: 'Overall Stats'),
@@ -206,8 +208,10 @@ class _HeaderView extends StatelessWidget {
     this.positionInQueue,
     required this.onBack,
     required this.onScan,
+    required this.event,
   });
 
+  final Event event;
   final int? positionInQueue;
   final Function()? onBack;
   final Function()? onScan;
@@ -229,7 +233,7 @@ class _HeaderView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Job Event 123',
+              Text(event.name ?? '',
                   style: context.bodyLarge, maxLines: 1, softWrap: true),
               SizedBox(height: 4),
               Row(

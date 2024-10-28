@@ -69,7 +69,7 @@ class EventsScreen extends StatelessWidget {
                               itemBuilder: (BuildContext context, int index) {
                                 final event = cubit.events[index];
                                 return InkWell(
-                                  onTap: () => cubit.navigateToHome(context),
+                                  onTap: () => cubit.navigateToHome(context, event),
                                   child: EventItemView(event: event),
                                 );
                               },
