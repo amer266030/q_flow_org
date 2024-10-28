@@ -8,6 +8,7 @@ extension NetworkFunctions on EventsCubit {
     try {
       emitLoading();
       var events = await SupabaseEvent.fetchEvents();
+      print(events?.length);
       return events;
     } catch (e) {
       emitError('Could not fetch events!\nPlease try again later.');
