@@ -52,7 +52,7 @@ class AddEventScreen extends StatelessWidget {
                       children: [
                         BlocBuilder<AddEventCubit, AddEventState>(
                           builder: (context, state) {
-                            return _ImgView(event: event);
+                            return _ImgView(event: event, cubit: cubit);
                           },
                         ),
                         TextButton(
@@ -214,9 +214,10 @@ class AddEventScreen extends StatelessWidget {
 }
 
 class _ImgView extends StatelessWidget {
-  const _ImgView({required this.event});
+  const _ImgView({required this.event, required this.cubit});
 
   final Event? event;
+  final AddEventCubit cubit;
 
   @override
   Widget build(BuildContext context) {
@@ -240,12 +241,15 @@ class _ImgView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                       ),
                       elevation: 5,
-                      child: event?.imgUrl == null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(32),
-                              child: Image(
-                                  image: Img.logoPurple, fit: BoxFit.cover))
-                          : Image.network(event!.imgUrl!, fit: BoxFit.cover)),
+                      child: cubit.imgUrl != null
+                          ? Image.file(cubit.imgUrl!, fit: BoxFit.cover)
+                          : event?.imgUrl == null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(32),
+                                  child: Image(
+                                      image: Img.logoPurple, fit: BoxFit.cover))
+                              : Image.network(event!.imgUrl!,
+                                  fit: BoxFit.cover)),
                 ),
               ),
             ),
