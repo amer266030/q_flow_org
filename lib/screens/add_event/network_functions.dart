@@ -8,7 +8,6 @@ import '../../supabase/supabase_event.dart';
 
 extension NetworkFunctions on AddEventCubit {
   createEvent(BuildContext context) async {
-    print(SupabaseMgr.shared.supabase.auth.currentUser?.id ?? '');
     var event = Event(
       organizerId: SupabaseMgr.shared.supabase.auth.currentUser?.id ?? '',
       name: nameController.text,
@@ -16,14 +15,31 @@ extension NetworkFunctions on AddEventCubit {
       startDate: startDate.toFormattedString(),
       endDate: endDate.toFormattedString(),
     );
-    print(event);
     try {
       emitLoading();
       await SupabaseEvent.createEvent(event: event, imageFile: imgUrl);
-      await Future.delayed(Duration(microseconds: 50));
+      await Future.delayed(Duration(milliseconds: 50));
       Navigator.of(context).pop();
     } catch (e) {
       emitError('Could not create event!\nPlease try again later.');
+    }
+  }
+
+  updateEvent(BuildContext context, String eventId) async {
+    var event = Event(
+      name: nameController.text,
+      location: locationController.text,
+      startDate: startDate.toFormattedString(),
+      endDate: endDate.toFormattedString(),
+    );
+    try {
+      emitLoading();
+      await SupabaseEvent.updateEvent(
+          event: event, eventId: eventId, imageFile: imgUrl);
+      await Future.delayed(Duration(milliseconds: 50));
+      Navigator.of(context).pop();
+    } catch (e) {
+      emitError('Could not update event!\nPlease try again later.');
     }
   }
 }

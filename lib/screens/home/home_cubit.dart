@@ -9,7 +9,9 @@ import 'package:q_flow_organizer/model/user/visitor.dart';
 import 'package:q_flow_organizer/screens/company_rating.dart/company_rating_screen.dart';
 import 'package:q_flow_organizer/screens/visitor_rating.dart/visitor_rating_screen.dart';
 
+import '../../model/event/event.dart';
 import '../../model/user/company.dart';
+import '../add_event/add_event_screen.dart';
 
 part 'home_state.dart';
 
@@ -64,6 +66,22 @@ class HomeCubit extends Cubit<HomeState> {
     emitUpdate();
   }
 
+  Future scanQR() async {
+    String scan;
+    try {
+      scan = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', false, ScanMode.QR);
+      print(scan);
+    } on PlatformException {
+      scan = 'Failed to get platform version.';
+    }
+    emitUpdate();
+  }
+
+  navigateToEditEvent(BuildContext context, Event event) =>
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AddEventScreen(event: event)));
+
   navigateToCompanyRating(BuildContext context, Company company) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => CompanyRatingScreen(
@@ -78,18 +96,6 @@ class HomeCubit extends Cubit<HomeState> {
         builder: (context) => VisitorRatingScreen(
               visitor: visitor,
             )));
-  }
-
-  Future scanQR() async {
-    String scan;
-    try {
-      scan = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', false, ScanMode.QR);
-      print(scan);
-    } on PlatformException {
-      scan = 'Failed to get platform version.';
-    }
-    emitUpdate();
   }
 
   navigateBack(BuildContext context) => Navigator.of(context).pop();

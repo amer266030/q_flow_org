@@ -11,6 +11,7 @@ extension NetworkFunctions on EventsCubit {
       print(events?.length);
       return events;
     } catch (e) {
+      print(e.toString());
       emitError('Could not fetch events!\nPlease try again later.');
     }
   }

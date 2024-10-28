@@ -57,12 +57,18 @@ class SupabaseEvent {
     }
   }
 
-  static Future updateEvent(Event event) async {
+  static Future updateEvent(
+      {required Event event,
+      required String eventId,
+      required File? imageFile}) async {
     try {
+      if (imageFile != null) {
+        event.imgUrl = await uploadImage(imageFile, event.name ?? '1234');
+      }
       final response = await supabase
           .from(eventTableKey)
           .update(event.toJson())
-          .eq('id', event.id ?? '');
+          .eq('id', eventId);
       return response;
     } on AuthException catch (_) {
       rethrow;

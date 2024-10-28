@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:q_flow_organizer/extensions/date_ext.dart';
 import 'package:q_flow_organizer/utils/excel_util.dart';
 import 'package:uuid/uuid.dart';
 
@@ -38,10 +39,10 @@ class AddEventCubit extends Cubit<AddEventState> {
     nameController.text = event?.name ?? '';
     locationController.text = event?.location ?? '';
     if (event?.startDate != null) {
-      startDate = DateTime.parse(event!.startDate!);
+      startDate = event!.startDate!.toDate();
     }
     if (event?.endDate != null) {
-      endDate = DateTime.parse(event!.endDate!);
+      endDate = event!.endDate!.toDate();
     }
   }
 

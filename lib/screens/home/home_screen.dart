@@ -29,9 +29,9 @@ class HomeScreen extends StatelessWidget {
               child: ListView(
                 children: [
                   _HeaderView(
-                    positionInQueue: null,
                     onBack: () => cubit.navigateBack(context),
                     onScan: () => cubit.scanQR(),
+                    onEdit: () => cubit.navigateToEditEvent(context, event),
                     event: event,
                   ),
                   Divider(color: context.bg2),
@@ -208,16 +208,17 @@ class _StatCardsView extends StatelessWidget {
 
 class _HeaderView extends StatelessWidget {
   const _HeaderView({
-    this.positionInQueue,
     required this.onBack,
     required this.onScan,
     required this.event,
+    required this.onEdit,
   });
 
   final Event event;
-  final int? positionInQueue;
   final Function()? onBack;
   final Function()? onScan;
+  final VoidCallback onEdit;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -226,18 +227,38 @@ class _HeaderView extends StatelessWidget {
             onPressed: onBack, icon: Icon(Icons.arrow_back_ios_new_rounded)),
         Expanded(
             child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ClipOval(
-              child: Image(image: Img.logoTurquoise, fit: BoxFit.contain)),
+          padding: const EdgeInsets.all(2),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: event.imgUrl == null
+                  ? Image(image: Img.logoPurple, fit: BoxFit.cover)
+                  : Image.network(event.imgUrl!, fit: BoxFit.cover),
+            ),
+          ),
         )),
         const SizedBox(width: 8),
         Expanded(
-          flex: 3,
+          flex: 4,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(event.name ?? '',
-                  style: context.bodyLarge, maxLines: 1, softWrap: true),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  InkWell(
+                      onTap: onEdit,
+                      child: Icon(
+                        CupertinoIcons.square_pencil,
+                        color: context.primary,
+                        size: context.titleSmall.fontSize,
+                      )),
+                  SizedBox(width: 4),
+                  Text(event.name ?? '',
+                      style: context.bodyMedium, maxLines: 1, softWrap: true)
+                ],
+              ),
               SizedBox(height: 4),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
