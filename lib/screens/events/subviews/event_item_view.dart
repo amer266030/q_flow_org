@@ -37,7 +37,9 @@ class EventItemView extends StatelessWidget {
                 aspectRatio: 1,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(32),
-                  child: Image(image: Img.logoPurple, fit: BoxFit.fill),
+                  child: event.imgUrl == null
+                      ? Image(image: Img.logoPurple, fit: BoxFit.cover)
+                      : Image.network(event.imgUrl!, fit: BoxFit.cover),
                 ),
               ),
               Padding(

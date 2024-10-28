@@ -4,8 +4,8 @@ class Event {
   String? name;
   String? location;
   String? imgUrl;
-  bool? didInviteCompanies;
-  bool? didInviteUsers;
+  bool didInviteCompanies;
+  bool didInviteUsers;
   String? startDate;
   String? endDate;
 
@@ -15,8 +15,8 @@ class Event {
     this.name,
     this.location,
     this.imgUrl,
-    this.didInviteCompanies,
-    this.didInviteUsers,
+    this.didInviteCompanies = false,
+    this.didInviteUsers = false,
     this.startDate,
     this.endDate,
   });
@@ -28,8 +28,8 @@ class Event {
       name: json['name'] as String?,
       location: json['location'] as String?,
       imgUrl: json['img_url'] as String?,
-      didInviteCompanies: json['did_invite_companies'] as bool?,
-      didInviteUsers: json['did_invite_users'] as bool?,
+      didInviteCompanies: json['did_invite_companies'] as bool,
+      didInviteUsers: json['did_invite_users'] as bool,
       startDate: json['start_date'] as String?,
       endDate: json['end_date'] as String?,
     );

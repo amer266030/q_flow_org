@@ -32,6 +32,9 @@ class AddEventCubit extends Cubit<AddEventState> {
   List<EventInvitedCompanyEmail> companyEmails = [];
 
   initialLoad(Event? event) {
+    if (event?.id != null) {
+      eventId = event!.id!;
+    }
     nameController.text = event?.name ?? '';
     locationController.text = event?.location ?? '';
     if (event?.startDate != null) {
@@ -39,9 +42,6 @@ class AddEventCubit extends Cubit<AddEventState> {
     }
     if (event?.endDate != null) {
       endDate = DateTime.parse(event!.endDate!);
-    }
-    if (event?.id != null) {
-      eventId = event!.id!;
     }
   }
 

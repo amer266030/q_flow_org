@@ -237,19 +237,24 @@ class _ImgView extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(4),
                   child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(100),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    elevation: 5,
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: cubit.imgUrl != null
+                            ? Image.file(cubit.imgUrl!, fit: BoxFit.cover)
+                            : event?.imgUrl == null
+                                ? Image(
+                                    image: Img.logoPurple, fit: BoxFit.cover)
+                                : Image.network(event!.imgUrl!,
+                                    fit: BoxFit.cover),
                       ),
-                      elevation: 5,
-                      child: cubit.imgUrl != null
-                          ? Image.file(cubit.imgUrl!, fit: BoxFit.cover)
-                          : event?.imgUrl == null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(32),
-                                  child: Image(
-                                      image: Img.logoPurple, fit: BoxFit.cover))
-                              : Image.network(event!.imgUrl!,
-                                  fit: BoxFit.cover)),
+                    ),
+                  ),
                 ),
               ),
             ),
