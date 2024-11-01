@@ -28,11 +28,11 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   _HeaderView(
                     onBack: () => cubit.navigateBack(context),
-                    onScan: () => cubit.scanQR(),
+                    onScan: () => cubit.scanQR(context),
                     onEdit: () => cubit.navigateToEditEvent(context, event),
                     event: event,
                   ),
-                  Divider(color: context.bg2),
+                   Divider(color: context.textColor3),
                   _SectionHeaderView(title: 'Overall Stats'),
                   _StatCardsView(
                     numCompanies: 100,
@@ -122,12 +122,14 @@ class _StatCardsView extends StatelessWidget {
             ),
             Container(
               height: context.screenWidth * 0.27,
+              width: context.screenWidth * 0.27,
               child: Card(
                 shape: CircleBorder(),
                 elevation: 4,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         CupertinoIcons.building_2_fill,
@@ -166,8 +168,9 @@ class _StatCardsView extends StatelessWidget {
                   shape: CircleBorder(),
                   elevation: 4,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.all(8),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(height: 4),
                         Icon(
@@ -217,12 +220,14 @@ class _StatCardsView extends StatelessWidget {
             ),
             Container(
               height: context.screenWidth * 0.27,
+              width: context.screenWidth * 0.27,
               child: Card(
                 shape: CircleBorder(),
                 elevation: 4,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(8),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         CupertinoIcons.person_2_square_stack_fill,
@@ -283,7 +288,15 @@ class _HeaderView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: event.imgUrl == null
                   ? Image(image: Img.logoPurple, fit: BoxFit.cover)
-                  : Image.network(event.imgUrl!, fit: BoxFit.cover),
+                  : FadeInImage(
+                      placeholder: Img.logoTurquoise,
+                      image: NetworkImage(event.imgUrl ?? ''),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image(
+                            image: Img.logoTurquoise, fit: BoxFit.cover);
+                      },
+                    ),
             ),
           ),
         )),
