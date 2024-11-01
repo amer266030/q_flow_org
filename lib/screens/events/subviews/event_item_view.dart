@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
-import '../../../extensions/date_ext.dart';
 
 import '../../../extensions/img_ext.dart';
 import '../../../model/event/event.dart';

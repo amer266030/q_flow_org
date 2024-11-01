@@ -2,11 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/extensions/screen_size.dart';
-import 'package:q_flow_organizer/model/enums/reports.dart';
 import 'package:q_flow_organizer/model/event/event.dart';
-import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
 import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
-import 'package:q_flow_organizer/screens/home/subviews/report_content.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
@@ -56,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                             height: 6,
                           ),
                           ReportCards(
-                            onTap: () {},
+                            onTap: () => cubit.navigateToTopMajors(context),
                             title: 'Top In-demand\nMajors',
                             icon: Icons.pie_chart_rounded,
                           ),
@@ -64,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                             height: 20,
                           ),
                           ReportCards(
-                            onTap: () {},
+                            onTap: () => cubit.navigateToCompanyRating(context),
                             title: 'Total Company\nRating',
                             icon: Icons.bar_chart_rounded,
                           )
@@ -74,7 +71,7 @@ class HomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ReportCards(
-                            onTap: () {},
+                            onTap: () => cubit.navigateToMostApplied(context),
                             title: 'Most applied\nfor companies',
                             icon: Icons.bar_chart_rounded,
                           ),
@@ -82,7 +79,9 @@ class HomeScreen extends StatelessWidget {
                             height: 20,
                           ),
                           ReportCards(
-                            onTap: () {},
+                            onTap: () => cubit.navigateToVisitorRating(
+                              context,
+                            ),
                             title: 'Total Visitor\nRating',
                             icon: Icons.bar_chart_rounded,
                           )
@@ -157,41 +156,58 @@ class _StatCardsView extends StatelessWidget {
           ],
         ),
         Expanded(
-          child: Container(
-            height: context.screenWidth * 0.3,
-            child: Card(
-              shape: CircleBorder(),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    SizedBox(height: 4),
-                    Icon(
-                      CupertinoIcons.person_3_fill,
-                      color: context.textColor3,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: context.screenWidth * 0.3,
+                width: context.screenWidth * 0.3,
+                child: Card(
+                  shape: CircleBorder(),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Column(
+                      children: [
+                        SizedBox(height: 4),
+                        Icon(
+                          CupertinoIcons.person_3_fill,
+                          color: context.textColor3,
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          '$numVisitors',
+                          style: TextStyle(
+                            fontSize: context.titleSmall.fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: context.primary,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Visitors',
+                          style: TextStyle(
+                            fontSize: context.bodyLarge.fontSize,
+                            color: context.textColor1,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 6),
-                    Text(
-                      '$numVisitors',
-                      style: TextStyle(
-                        fontSize: context.titleSmall.fontSize,
-                        fontWeight: FontWeight.bold,
-                        color: context.primary,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Visitors',
-                      style: TextStyle(
-                        fontSize: context.bodyLarge.fontSize,
-                        color: context.textColor1,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              Container(
+                height: context.screenWidth * 0.3,
+                width: context.screenWidth * 0.3,
+                child: CircularProgressIndicator(
+                  strokeWidth: 7,
+                  color: context.primary,
+                  backgroundColor: context.bg2,
+                  value: 10 / 100,
+                  strokeCap: StrokeCap.round,
+                ),
+              ),
+            ],
           ),
         ),
         Column(

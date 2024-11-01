@@ -1,24 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/extensions/img_ext.dart';
-import 'package:q_flow_organizer/extensions/screen_size.dart';
+
 import 'package:q_flow_organizer/model/rating/company_rating_question.dart';
-import 'package:q_flow_organizer/model/user/company.dart';
-import 'package:q_flow_organizer/screens/company_rating.dart/company_rating_cubit.dart';
+import 'package:q_flow_organizer/reusable_components/indicator.dart';
+import 'package:q_flow_organizer/reusable_components/page_header_view.dart';
+import 'package:q_flow_organizer/screens/company_rating/company_rating_cubit.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:q_flow_organizer/screens/home/charts/pie_chart.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
 class CompanyRatingScreen extends StatelessWidget {
-  final Company company; // Accept the company as a parameter
   final List<CompanyRatingQuestion> questions;
 
   const CompanyRatingScreen({
     Key? key,
     required this.questions,
-    required this.company, // Require the company parameter
   }) : super(key: key);
 
   @override
@@ -39,56 +36,20 @@ class CompanyRatingScreen extends StatelessWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image(
-                                  image: Img.logoPurple,
-                                  fit: BoxFit.contain,
-                                  width: context.screenWidth * 0.1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                company.name ??
-                                    'Company Name', // Display company name
-                                style: context.titleSmall,
-                                maxLines: 1,
-                                softWrap: true,
-                              ),
-                            ),
-                          ],
-                        ),
+                        PageHeaderView(title: 'Rating Companies \nChart'),
                         SizedBox(
                           height: 20,
                         ),
-                        Text(
-                          'Rating Chart',
-                          style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        AspectRatio(aspectRatio: 1.2, child: _BarChart()),
+                        AspectRatio(aspectRatio: 1, child: _BarChart()),
                         SizedBox(
                           height: 50,
                         ),
                         Text(
                           'Rating Questions List',
                           style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontSize: context.titleSmall.fontSize,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor1),
                         ),
                         SizedBox(
                           height: 20,
@@ -96,7 +57,6 @@ class CompanyRatingScreen extends StatelessWidget {
                         Indicator(
                           color: context.secondary,
                           text: 'Satisfaction',
-                          isSquare: true,
                           textColor: context.textColor2,
                         ),
                       ],
@@ -117,15 +77,21 @@ class _BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(
-      BarChartData(
-        barTouchData: barTouchData(context),
-        titlesData: titlesData(context),
-        borderData: borderData,
-        barGroups: barGroups(context),
-        gridData: const FlGridData(show: false),
-        alignment: BarChartAlignment.spaceAround,
-        maxY: 5,
+    return Card(
+      color: context.bg2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+        child: BarChart(
+          BarChartData(
+            barTouchData: barTouchData(context),
+            titlesData: titlesData(context),
+            borderData: borderData,
+            barGroups: barGroups(context),
+            gridData: const FlGridData(show: false),
+            alignment: BarChartAlignment.spaceAround,
+            maxY: 5,
+          ),
+        ),
       ),
     );
   }

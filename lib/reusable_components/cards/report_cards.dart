@@ -9,7 +9,7 @@ class ReportCards extends StatelessWidget {
       required this.onTap,
       required this.title,
       required this.icon});
-  final Function()? onTap;
+  final Function() onTap;
   final String title;
   final IconData icon;
   @override

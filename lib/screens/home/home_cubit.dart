@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/model/enums/company_size.dart';
-import 'package:q_flow_organizer/model/enums/reports.dart';
+
 import 'package:q_flow_organizer/model/rating/company_rating_question.dart';
 import 'package:q_flow_organizer/model/user/visitor.dart';
-import 'package:q_flow_organizer/screens/company_rating.dart/company_rating_screen.dart';
-import 'package:q_flow_organizer/screens/visitor_rating.dart/visitor_rating_screen.dart';
+import 'package:q_flow_organizer/screens/company_rating/company_rating_screen.dart';
+import 'package:q_flow_organizer/screens/most_applied/most_applied_screen.dart';
+import 'package:q_flow_organizer/screens/top_majors/top_majors_screen.dart';
+import 'package:q_flow_organizer/screens/visitor_rating/visitor_rating_screen.dart';
 
 import '../../model/event/event.dart';
 import '../../model/user/company.dart';
@@ -16,55 +17,10 @@ import '../add_event/add_event_screen.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(HomeInitial()) {
-    initialLoad();
-  }
+  HomeCubit() : super(HomeInitial()) {}
   List<Company> companies = [];
   List<Visitor> visitors = [];
   final List<CompanyRatingQuestion> questions = [];
-  Reports selectedStatus = Reports.majors;
-  int touchedGroupIndex = -1;
-  String? currantSelected = "Company Rating";
-  final ValueNotifier<int> touchedIndex = ValueNotifier<int>(-1);
-
-  initialLoad() {
-    companies = List.generate(
-      5,
-      (index) => Company(
-        id: '${index + 1}',
-        name: 'ABC Company ${index + 1}',
-        description: 'ABC Company specializes in providing tech solutions.',
-        companySize: CompanySize.oneHundredTo200,
-        establishedYear: 2015,
-        logoUrl: null,
-      ),
-    );
-    visitors = List.generate(
-      5,
-      (index) => Visitor(
-        id: '${index + 1}',
-        fName: 'John ',
-        lName: 'Doe ${index + 1}',
-      ),
-    );
-
-    emitUpdate();
-  }
-
-  setSelectedStatus(int idx) {
-    selectedStatus = Reports.values[idx];
-    emitUpdate();
-  }
-
-  void updateTouchedGroupIndex(int index) {
-    touchedGroupIndex = index;
-    emitUpdate();
-  }
-
-  void filterRating(String str) {
-    currantSelected = str;
-    emitUpdate();
-  }
 
   Future scanQR() async {
     String scan;
@@ -82,20 +38,29 @@ class HomeCubit extends Cubit<HomeState> {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => AddEventScreen(event: event)));
 
-  navigateToCompanyRating(BuildContext context, Company company) {
+  navigateToCompanyRating(
+    BuildContext context,
+  ) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => CompanyRatingScreen(
-        company: company,
         questions: questions,
       ),
     ));
   }
 
-  navigateToVisitorRating(BuildContext context, Visitor visitor) {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => VisitorRatingScreen(
-              visitor: visitor,
-            )));
+  navigateToVisitorRating(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => VisitorRatingScreen()));
+  }
+
+  navigateToTopMajors(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => TopMajorsScreen()));
+  }
+
+  navigateToMostApplied(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => MostAppliedScreen()));
   }
 
   navigateBack(BuildContext context) => Navigator.of(context).pop();

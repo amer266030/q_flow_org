@@ -2,20 +2,16 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/extensions/img_ext.dart';
-import 'package:q_flow_organizer/extensions/screen_size.dart';
-import 'package:q_flow_organizer/model/user/visitor.dart';
-import 'package:q_flow_organizer/screens/home/charts/pie_chart.dart';
-import 'package:q_flow_organizer/screens/visitor_rating.dart/visitor_rating_cubit.dart';
+import 'package:q_flow_organizer/reusable_components/indicator.dart';
+import 'package:q_flow_organizer/reusable_components/page_header_view.dart';
+import 'package:q_flow_organizer/screens/visitor_rating/visitor_rating_cubit.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
 class VisitorRatingScreen extends StatelessWidget {
   const VisitorRatingScreen({
     super.key,
-    required this.visitor,
   });
-  final Visitor visitor;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -34,66 +30,17 @@ class VisitorRatingScreen extends StatelessWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image(
-                                  image: Img.logoPurple,
-                                  fit: BoxFit.contain,
-                                  width: context.screenWidth * 0.1,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    " ${visitor.fName} ${visitor.lName}",
-                                    style: context.titleSmall,
-                                    maxLines: 1,
-                                    softWrap: true,
-                                  ),
-                                  Text(
-                                    " ${visitor.id} ",
-                                    style: context.titleSmall,
-                                    maxLines: 1,
-                                    softWrap: true,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        PageHeaderView(title: 'Rating Visitors \nChart'),
+                        AspectRatio(aspectRatio: 1.2, child: VisitorBarChart()),
                         SizedBox(
                           height: 20,
                         ),
                         Text(
-                          'Rating Chart',
-                          style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        AspectRatio(aspectRatio: 1.2, child: VisitorBarChart()),
-                        SizedBox(
-                          height: 50,
-                        ),
-                        Text(
                           'Rating Questions List',
                           style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontSize: context.titleSmall.fontSize,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor1),
                         ),
                         SizedBox(
                           height: 20,
@@ -101,19 +48,16 @@ class VisitorRatingScreen extends StatelessWidget {
                         Indicator(
                           color: context.secondary,
                           text: 'Tech Skills',
-                          isSquare: false,
                           textColor: context.textColor2,
                         ),
                         Indicator(
                           color: context.secondary,
                           text: 'Jop Skills',
-                          isSquare: false,
                           textColor: context.textColor2,
                         ),
                         Indicator(
                           color: context.secondary,
                           text: 'Soft Skills',
-                          isSquare: false,
                           textColor: context.textColor2,
                         ),
                       ],
@@ -134,15 +78,23 @@ class VisitorBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(
-      BarChartData(
-        barTouchData: barTouchData(context),
-        titlesData: titlesData(context),
-        borderData: borderData,
-        barGroups: barGroups(context),
-        gridData: const FlGridData(show: false),
-        alignment: BarChartAlignment.spaceAround,
-        maxY: 5,
+    return Card(
+      color: context.bg2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 40,
+        ),
+        child: BarChart(
+          BarChartData(
+            barTouchData: barTouchData(context),
+            titlesData: titlesData(context),
+            borderData: borderData,
+            barGroups: barGroups(context),
+            gridData: const FlGridData(show: false),
+            alignment: BarChartAlignment.spaceAround,
+            maxY: 5,
+          ),
+        ),
       ),
     );
   }
