@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
                     onEdit: () => cubit.navigateToEditEvent(context, event),
                     event: event,
                   ),
-                   Divider(color: context.textColor3),
+                  Divider(color: context.textColor3),
                   _SectionHeaderView(title: 'Overall Stats'),
                   _StatCardsView(
                     numCompanies: 100,
@@ -287,14 +287,13 @@ class _HeaderView extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: event.imgUrl == null
-                  ? Image(image: Img.logoPurple, fit: BoxFit.cover)
+                  ? Image(image: Img.logoOrange, fit: BoxFit.cover)
                   : FadeInImage(
-                      placeholder: Img.logoTurquoise,
+                      placeholder: Img.logoOrange,
                       image: NetworkImage(event.imgUrl ?? ''),
                       fit: BoxFit.cover,
                       imageErrorBuilder: (context, error, stackTrace) {
-                        return Image(
-                            image: Img.logoTurquoise, fit: BoxFit.cover);
+                        return Image(image: Img.logoOrange, fit: BoxFit.cover);
                       },
                     ),
             ),

@@ -49,7 +49,7 @@ class CompanyCard extends StatelessWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: Image(
-                                        image: Img.logoPurple,
+                                        image: Img.logoOrange,
                                         fit: BoxFit.contain,
                                       ),
                                     ),

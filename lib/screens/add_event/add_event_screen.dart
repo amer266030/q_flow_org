@@ -249,7 +249,7 @@ class _ImgView extends StatelessWidget {
                             ? Image.file(cubit.imgUrl!, fit: BoxFit.cover)
                             : event?.imgUrl == null
                                 ? Image(
-                                    image: Img.logoPurple, fit: BoxFit.cover)
+                                    image: Img.logoOrange, fit: BoxFit.cover)
                                 : Image.network(event!.imgUrl!,
                                     fit: BoxFit.cover),
                       ),
