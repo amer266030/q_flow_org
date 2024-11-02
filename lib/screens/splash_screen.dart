@@ -19,7 +19,7 @@ class SplashScreen extends StatelessWidget {
         image: isLightTheme ? Img.splashLight : Img.splashDark,
       ),
       nextScreen: EventsScreen(),
-      splashTransition: SplashTransition.fadeTransition,
+      splashTransition: SplashTransition.rotationTransition,
       backgroundColor: context.bg1,
     );
   }
