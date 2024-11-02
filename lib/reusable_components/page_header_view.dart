@@ -9,7 +9,10 @@ class PageHeaderView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 32, bottom: 48),
-      child: Text(title, style: context.titleLarge),
+      child: Text(
+         
+          title,
+          style: context.titleLarge),
     );
   }
 }

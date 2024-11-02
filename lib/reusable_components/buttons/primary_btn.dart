@@ -27,7 +27,7 @@ class PrimaryBtn extends StatelessWidget {
             foregroundColor: Colors.white,
             textStyle: isSmall ? context.bodyMedium : context.titleSmall,
             padding: EdgeInsets.all(isSmall ? 4 : 16),
-            backgroundColor: context.primary.withOpacity(0.4),
+            backgroundColor: context.primary.withOpacity(0.7),
             shadowColor: Colors.transparent),
         onPressed: callback,
         child: Text(title),

@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/model/enums/reports.dart';
+import 'package:q_flow_organizer/extensions/screen_size.dart';
 import 'package:q_flow_organizer/model/event/event.dart';
-import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
-import 'package:q_flow_organizer/screens/home/subviews/report_content.dart';
+import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
-import '../../model/event/event.dart';
 import 'home_cubit.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -30,42 +28,66 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   _HeaderView(
                     onBack: () => cubit.navigateBack(context),
-                    onScan: () => cubit.scanQR(),
+                    onScan: () => cubit.scanQR(context),
                     onEdit: () => cubit.navigateToEditEvent(context, event),
                     event: event,
                   ),
-                  Divider(color: context.bg2),
+                   Divider(color: context.textColor3),
                   _SectionHeaderView(title: 'Overall Stats'),
                   _StatCardsView(
                     numCompanies: 100,
                     numVisitors: 1000,
                     numInterviews: 2500,
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  _SectionHeaderView(title: 'Event Reports'),
-                  BlocBuilder<HomeCubit, HomeState>(
-                    builder: (context, state) {
-                      return Column(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ExpandedToggleButtons(
-                            currentIndex:
-                                Reports.values.indexOf(cubit.selectedStatus),
-                            tabs: Reports.values.map((r) => r.value).toList(),
-                            callback: (int value) =>
-                                cubit.setSelectedStatus(value),
+                          SizedBox(
+                            height: 50,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 24),
-                            child: ReportContent(
-                              context: context,
-                              cubit: cubit,
-                            ),
+                          _SectionHeaderView(title: 'Event Reports'),
+                          SizedBox(
+                            height: 6,
+                          ),
+                          ReportCards(
+                            onTap: () => cubit.navigateToTopMajors(context),
+                            title: 'Top In-demand\nMajors',
+                            icon: Icons.pie_chart_rounded,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ReportCards(
+                            onTap: () => cubit.navigateToCompanyRating(context),
+                            title: 'Total Company\nRating',
+                            icon: Icons.bar_chart_rounded,
                           )
                         ],
-                      );
-                    },
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ReportCards(
+                            onTap: () => cubit.navigateToMostApplied(context),
+                            title: 'Most applied\nfor companies',
+                            icon: Icons.bar_chart_rounded,
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ReportCards(
+                            onTap: () => cubit.navigateToVisitorRating(
+                              context,
+                            ),
+                            title: 'Total Visitor\nRating',
+                            icon: Icons.bar_chart_rounded,
+                          )
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -93,28 +115,34 @@ class _StatCardsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: [
-                  Text(
-                    '$numCompanies',
-                    style: TextStyle(
-                      fontSize: context.titleSmall.fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: context.primary,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
+        Column(
+          children: [
+            SizedBox(
+              height: 80,
+            ),
+            Container(
+              height: context.screenWidth * 0.27,
+              width: context.screenWidth * 0.27,
+              child: Card(
+                shape: CircleBorder(),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(CupertinoIcons.circle,
-                          size: context.bodyLarge.fontSize),
-                      SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.building_2_fill,
+                        color: context.textColor3,
+                      ),
+                      Text(
+                        '$numCompanies',
+                        style: TextStyle(
+                          fontSize: context.titleSmall.fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: context.primary,
+                        ),
+                      ),
                       Text(
                         'Companies',
                         style: TextStyle(
@@ -124,69 +152,95 @@ class _StatCardsView extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
         Expanded(
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: [
-                  Text(
-                    '$numVisitors',
-                    style: TextStyle(
-                      fontSize: context.titleSmall.fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: context.primary,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: context.screenWidth * 0.3,
+                width: context.screenWidth * 0.3,
+                child: Card(
+                  shape: CircleBorder(),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 4),
+                        Icon(
+                          CupertinoIcons.person_3_fill,
+                          color: context.textColor3,
+                        ),
+                        SizedBox(height: 6),
+                        Text(
+                          '$numVisitors',
+                          style: TextStyle(
+                            fontSize: context.titleSmall.fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: context.primary,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Visitors',
+                          style: TextStyle(
+                            fontSize: context.bodyLarge.fontSize,
+                            color: context.textColor1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 4),
-                  Row(
+                ),
+              ),
+              Container(
+                height: context.screenWidth * 0.3,
+                width: context.screenWidth * 0.3,
+                child: CircularProgressIndicator(
+                  strokeWidth: 7,
+                  color: context.primary,
+                  backgroundColor: context.bg2,
+                  value: 10 / 100,
+                  strokeCap: StrokeCap.round,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Column(
+          children: [
+            SizedBox(
+              height: 80,
+            ),
+            Container(
+              height: context.screenWidth * 0.27,
+              width: context.screenWidth * 0.27,
+              child: Card(
+                shape: CircleBorder(),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(CupertinoIcons.circle,
-                          size: context.bodyLarge.fontSize),
-                      SizedBox(width: 4),
+                      Icon(
+                        CupertinoIcons.person_2_square_stack_fill,
+                        color: context.textColor3,
+                      ),
                       Text(
-                        'Visitors',
+                        '$numInterviews',
                         style: TextStyle(
-                          fontSize: context.bodySmall.fontSize,
-                          color: context.textColor1,
+                          fontSize: context.titleSmall.fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: context.primary,
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                children: [
-                  Text(
-                    '$numInterviews',
-                    style: TextStyle(
-                      fontSize: context.titleSmall.fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: context.primary,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(CupertinoIcons.circle,
-                          size: context.bodyLarge.fontSize),
-                      SizedBox(width: 4),
                       Text(
                         'Interviews',
                         style: TextStyle(
@@ -196,10 +250,10 @@ class _StatCardsView extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -234,7 +288,15 @@ class _HeaderView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               child: event.imgUrl == null
                   ? Image(image: Img.logoPurple, fit: BoxFit.cover)
-                  : Image.network(event.imgUrl!, fit: BoxFit.cover),
+                  : FadeInImage(
+                      placeholder: Img.logoTurquoise,
+                      image: NetworkImage(event.imgUrl ?? ''),
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image(
+                            image: Img.logoTurquoise, fit: BoxFit.cover);
+                      },
+                    ),
             ),
           ),
         )),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
-import '../../../extensions/date_ext.dart';
 
 import '../../../extensions/img_ext.dart';
 import '../../../model/event/event.dart';
@@ -39,7 +38,15 @@ class EventItemView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(32),
                   child: event.imgUrl == null
                       ? Image(image: Img.logoPurple, fit: BoxFit.cover)
-                      : Image.network(event.imgUrl!, fit: BoxFit.cover),
+                      : FadeInImage(
+                          placeholder: Img.logoTurquoise,
+                          image: NetworkImage(event.imgUrl ?? ''),
+                          fit: BoxFit.cover,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image(
+                                image: Img.logoTurquoise, fit: BoxFit.cover);
+                          },
+                        ),
                 ),
               ),
               Padding(

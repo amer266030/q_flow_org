@@ -1,5 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
@@ -17,7 +18,9 @@ AnimatedSnackBar animatedSnakbar({
           type: type,
           foregroundColor: (type == AnimatedSnackBarType.info)
               ? context.textColor2
-              : context.primary,
+              : (type == AnimatedSnackBarType.success)
+                  ? Colors.green 
+                  : Colors.red, 
           backgroundColor: (type == AnimatedSnackBarType.info)
               ? context.secondary
               : (type == AnimatedSnackBarType.success)

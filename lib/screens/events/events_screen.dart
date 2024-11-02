@@ -152,7 +152,7 @@ class _PageHeaderView extends StatelessWidget {
             ],
           ),
         ),
-        Divider(color: context.bg2, indent: 32, endIndent: 32),
+        Divider(color: context.textColor3, indent: 32, endIndent: 32),
       ],
     );
   }

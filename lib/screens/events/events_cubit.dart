@@ -20,27 +20,18 @@ class EventsCubit extends Cubit<EventsState> {
 
   List<Event> events = [];
 
-  bool isNotificationsEnabled = false;
   bool isDarkMode = true;
   bool isEnglish = true;
 
   initialLoad(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    isNotificationsEnabled =
-        (prefs.getString('notifications').toString() == 'true');
+
     final savedTheme = prefs.getString('theme');
     isDarkMode = (savedTheme == ThemeMode.dark.toString());
     final savedLocale = prefs.getString('locale');
     isEnglish = (savedLocale == 'en_US' || savedLocale == 'true');
     events = await fetchEvents(context);
-    emitUpdate();
-  }
 
-  void toggleNotifications(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    isNotificationsEnabled = !isNotificationsEnabled;
-    await prefs.setString(
-        'notifications', isNotificationsEnabled ? 'true' : 'false');
     emitUpdate();
   }
 
@@ -50,6 +41,7 @@ class EventsCubit extends Cubit<EventsState> {
     await prefs.setString('locale', isEnglish ? 'true' : 'false');
     context.setLocale(
         isEnglish ? const Locale('en', 'US') : const Locale('ar', 'SA'));
+
     emitUpdate();
   }
 
