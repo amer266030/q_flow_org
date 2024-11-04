@@ -48,17 +48,14 @@ class VisitorRatingScreen extends StatelessWidget {
                         Indicator(
                           color: context.secondary,
                           text: 'Tech Skills',
-                          textColor: context.textColor2,
                         ),
                         Indicator(
                           color: context.secondary,
                           text: 'Jop Skills',
-                          textColor: context.textColor2,
                         ),
                         Indicator(
                           color: context.secondary,
                           text: 'Soft Skills',
-                          textColor: context.textColor2,
                         ),
                       ],
                     );

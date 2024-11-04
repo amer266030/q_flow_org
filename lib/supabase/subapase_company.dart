@@ -1,14 +1,12 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../model/skills/skill.dart';
 import '../model/user/company.dart';
 import 'client/supabase_mgr.dart';
 
 class SupabaseCompany {
   static var supabase = SupabaseMgr.shared.supabase;
   static const String tableKey = 'company';
-
 
   static Future<List<Company>>? fetchCompanies() async {
     try {
@@ -20,8 +18,6 @@ class SupabaseCompany {
 
         return company;
       }).toList();
-
-
 
       return companies;
     } on AuthException catch (_) {

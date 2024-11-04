@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/extensions/screen_size.dart';
 import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
@@ -20,76 +22,105 @@ class HomeScreen extends StatelessWidget {
       create: (context) => HomeCubit(),
       child: Builder(builder: (context) {
         final cubit = context.read<HomeCubit>();
-        return Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: ListView(
-                children: [
-                  _HeaderView(
-                    onBack: () => cubit.navigateBack(context),
-                    onScan: () => cubit.scanQR(context),
-                    onEdit: () => cubit.navigateToEditEvent(context, event),
-                    event: event,
-                  ),
-                  Divider(color: context.textColor3),
-                  _SectionHeaderView(title: 'Overall Stats'),
-                  _StatCardsView(
-                    numCompanies: 100,
-                    numVisitors: 1000,
-                    numInterviews: 2500,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 50,
-                          ),
-                          _SectionHeaderView(title: 'Event Reports'),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToTopMajors(context),
-                            title: 'Top In-demand\nMajors',
-                            icon: Icons.pie_chart_rounded,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToCompanyRating(context),
-                            title: 'Total Company\nRating',
-                            icon: Icons.bar_chart_rounded,
-                          )
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ReportCards(
-                            onTap: () => cubit.navigateToMostApplied(context),
-                            title: 'Most applied\nfor companies',
-                            icon: Icons.bar_chart_rounded,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToVisitorRating(
-                              context,
+        return BlocListener<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (cubit.previousState is LoadingState) {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            }
+
+            if (state is LoadingState) {
+              showLoadingDialog(context);
+            }
+
+            if (state is ErrorState) {
+              showErrorDialog(context, state.msg);
+            }
+          },
+          child: Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: ListView(
+                  children: [
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return _HeaderView(
+                          onBack: () => cubit.navigateBack(context),
+                          onScan: () => cubit.scanQR(context),
+                          onEdit: () =>
+                              cubit.navigateToEditEvent(context, event),
+                          event: event,
+                        );
+                      },
+                    ),
+                    Divider(color: context.textColor3),
+                    _SectionHeaderView(title: 'Overall Stats'),
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return _StatCardsView(
+                          totalInvitedVisitors: cubit.totalInvitedVisitors,
+                          numCompanies: cubit.numCompanies,
+                          numVisitors: cubit.numVisitors,
+                          numInterviews: cubit.numInterviews,
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 50,
                             ),
-                            title: 'Total Visitor\nRating',
-                            icon: Icons.bar_chart_rounded,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                            _SectionHeaderView(title: 'Event Reports'),
+                            SizedBox(
+                              height: 6,
+                            ),
+                            ReportCards(
+                              onTap: () => cubit.navigateToTopMajors(context),
+                              title: 'Top In-demand\nMajors',
+                              icon: Icons.pie_chart_rounded,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            ReportCards(
+                              onTap: () {
+                                cubit.navigateToCompanyRating(context);
+                              },
+                              title: 'Total Company\nRating',
+                              icon: Icons.bar_chart_rounded,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ReportCards(
+                              onTap: () => cubit.navigateToMostApplied(context),
+                              title: 'Most applied\nfor companies',
+                              icon: Icons.bar_chart_rounded,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            ReportCards(
+                              onTap: () => cubit.navigateToVisitorRating(
+                                context,
+                              ),
+                              title: 'Total Visitor\nRating',
+                              icon: Icons.bar_chart_rounded,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -105,11 +136,13 @@ class _StatCardsView extends StatelessWidget {
     required this.numCompanies,
     required this.numVisitors,
     required this.numInterviews,
+    required this.totalInvitedVisitors,
   });
 
   final int numCompanies;
   final int numVisitors;
   final int numInterviews;
+  final int totalInvitedVisitors;
 
   @override
   Widget build(BuildContext context) {
@@ -199,17 +232,20 @@ class _StatCardsView extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                height: context.screenWidth * 0.3,
-                width: context.screenWidth * 0.3,
-                child: CircularProgressIndicator(
-                  strokeWidth: 7,
-                  color: context.primary,
-                  backgroundColor: context.bg2,
-                  value: 10 / 100,
-                  strokeCap: StrokeCap.round,
+              if (totalInvitedVisitors == 0)
+                Container()
+              else
+                Container(
+                  height: context.screenWidth * 0.3,
+                  width: context.screenWidth * 0.3,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 7,
+                    color: context.primary,
+                    backgroundColor: context.bg2,
+                    value: numVisitors / totalInvitedVisitors,
+                    strokeCap: StrokeCap.round,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -230,7 +266,7 @@ class _StatCardsView extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        CupertinoIcons.person_2_square_stack_fill,
+                        CupertinoIcons.rectangle_stack_person_crop_fill,
                         color: context.textColor3,
                       ),
                       Text(

@@ -17,4 +17,5 @@ class SupabaseMgr {
       anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
     ).then((value) => value.client);
   }
+  
 }

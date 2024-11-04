@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/model/user/company.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
 import 'package:q_flow_organizer/reusable_components/indicator.dart';
 import 'package:q_flow_organizer/reusable_components/page_header_view.dart';
 import 'package:q_flow_organizer/screens/most_applied/most_applied_cubit.dart';
@@ -19,199 +21,263 @@ class MostAppliedScreen extends StatelessWidget {
       create: (context) => MostAppliedCubit(),
       child: Builder(builder: (context) {
         final cubit = context.read<MostAppliedCubit>();
-        return Scaffold(
-            appBar: AppBar(),
-            body: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: ListView(
-                children: [
-                  Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PageHeaderView(
-                            title: 'Most applied for\nCompanies Chart'),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        CompanyBarChart(
-                          barGroups:
-                              initializeBarGroups(context, cubit.companies),
-                          touchedGroupIndex: cubit.touchedGroupIndex,
-                          onTouched: (index) =>
-                              cubit.updateTouchedGroupIndex(index),
-                          titles: cubit.companies
-                              .map((c) => c.name)
-                              .whereType<String>()
-                              .toList(),
-                        ),
-                        Text(
-                          'Companies List',
-                          style: TextStyle(
-                              fontSize: context.titleSmall.fontSize,
-                              fontWeight: FontWeight.bold,
-                              color: context.textColor1),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Indicator(
-                          color: context.secondary,
-                          text: 'Company A',
-                          textColor: context.textColor2,
-                        ),
-                      ]),
-                ],
-              ),
-            ));
+        return BlocListener<MostAppliedCubit, MostAppliedState>(
+          listener: (context, state) {
+            if (state is LoadingState) {
+              showLoadingDialog(context);
+            } else if (state is ErrorState) {
+              showErrorDialog(context, state.msg);
+              print(state.msg);
+            }
+          },
+          child: Scaffold(
+              appBar: AppBar(),
+              body: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: BlocBuilder<MostAppliedCubit, MostAppliedState>(
+                    builder: (context, state) {
+                      // Handle loading state
+                      if (state is LoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      // Handle error state
+                      if (state is ErrorState) {
+                        return Center(child: Text(""));
+                      }
+
+                      // Assume the state is loaded and we have companies
+                      final cubit = context.read<MostAppliedCubit>();
+
+                      return ListView(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              PageHeaderView(
+                                title: 'Most Applied for\nCompanies Chart',
+                              ),
+                              // Use the CompanyInterviewsBarChart here
+                              CompanyInterviewsBarChart(
+                                touchedGroupIndex: cubit.touchedGroupIndex,
+                                companies: cubit
+                                    .companies, // Pass the list of companies
+                                onTouch: (index) {
+                                  cubit.updateTouchedGroupIndex(
+                                      index); // Update touched index
+                                },
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                'Companies List',
+                                style: TextStyle(
+                                  fontSize: context.titleSmall.fontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: context.textColor1,
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              ...cubit.companies.asMap().entries.map((entry) {
+                                int index =
+                                    entry.key + 1; // Use index + 1 for display
+                                var company = entry.value;
+                                return Indicator(
+                                  icon: CupertinoIcons
+                                      .rectangle_stack_person_crop_fill,
+                                  showIndicator: false,
+                                  text:
+                                      "C$index: ${company['companyName']}", // Prefix with the number
+                                  count:
+                                      "${company['interviewCount']}", // Display interview count
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ))),
+        );
       }),
     );
   }
-
-  List<BarChartGroupData> initializeBarGroups(
-      BuildContext context, List<Company> companies) {
-    const width = 7.0;
-
-    return companies.asMap().entries.map((entry) {
-      int index = entry.key;
-      Company company = entry.value;
-
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-              toY: 5.0 + index,
-              color: context.primary,
-              width: width), // Example data
-          BarChartRodData(
-              toY: 10.0 + index,
-              color: context.secondary,
-              width: width), // Example data
-        ],
-      );
-    }).toList();
-  }
 }
 
-class CompanyBarChart extends StatelessWidget {
-  const CompanyBarChart({
-    required this.barGroups,
-    required this.touchedGroupIndex,
-    required this.onTouched,
-    required this.titles,
-    super.key,
-  });
-
-  final List<BarChartGroupData> barGroups;
+class CompanyInterviewsBarChart extends StatelessWidget {
   final int touchedGroupIndex;
-  final ValueChanged<int> onTouched;
-  final List<String> titles; // Ensure this is a list of Strings
+  final List<Map<String, dynamic>>
+      companies; // List of maps with company names and interview counts
+  final ValueChanged<int> onTouch;
+
+  CompanyInterviewsBarChart({
+    Key? key,
+    required this.touchedGroupIndex,
+    required this.companies,
+    required this.onTouch,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            const SizedBox(height: 38),
-            Expanded(
-              child: Card(
-                color: context.bg2,
+      child: Card(
+        color: context.bg2,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(height: 38),
+              Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: BarChart(
-                    BarChartData(
-                      maxY: 20,
-                      barTouchData: BarTouchData(
-                        touchCallback: (FlTouchEvent event, response) {
-                          if (response == null || response.spot == null) {
-                            onTouched(-1);
-                            return;
-                          }
-                          int touchedGroupIndex =
-                              response.spot!.touchedBarGroupIndex;
-                          onTouched(touchedGroupIndex);
-                        },
-                      ),
-                      titlesData: FlTitlesData(
-                        show: true,
-                        rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
-                        ),
-                        bottomTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            getTitlesWidget: (value, meta) {
-                              return Text(
-                                titles[value.toInt()],
-                                style: TextStyle(
-                                    fontSize: context.bodySmall.fontSize,
-                                    color: context.textColor2),
-                              );
-                            },
-                          ),
-                        ),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(
-                            showTitles: true,
-                            reservedSize: 28,
-                            interval: 1,
-                            getTitlesWidget: leftTitles,
-                          ),
-                        ),
-                      ),
-                      borderData: FlBorderData(
-                        show: true,
-                        border: Border(
-                          bottom: BorderSide(
-                              color: Colors.black.withOpacity(0.1), width: 2),
-                          left: BorderSide(
-                              color: Colors.black.withOpacity(0.1), width: 2),
-                          right: const BorderSide(color: Colors.transparent),
-                          top: const BorderSide(color: Colors.transparent),
-                        ),
-                      ),
-                      barGroups: barGroups,
-                      gridData: const FlGridData(show: false),
-                    ),
+                    mainBarData(context, touchedGroupIndex),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-          ],
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget leftTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: AppColors.darkText2,
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
+  BarChartData mainBarData(BuildContext context, int touchedIndex) {
+    return BarChartData(
+      barTouchData: BarTouchData(
+        touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (_) => context.bg1,
+          tooltipHorizontalAlignment: FLHorizontalAlignment.center,
+          tooltipMargin: -10,
+          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+            if (touchedIndex == group.x) {
+              String companyName =
+                  companies[group.x]['companyName']; // Get company name
+              int interviewCount =
+                  companies[group.x]['interviewCount']; // Get interview count
 
-    String text;
-    if (value == 0) {
-      text = '100';
-    } else if (value == 10) {
-      text = '200';
-    } else if (value == 19) {
-      text = '300';
-    } else {
-      return Container();
-    }
+              return BarTooltipItem(
+                '$companyName\n',
+                TextStyle(
+                  color: context.textColor3,
+                  fontWeight: context.titleMedium.fontWeight,
+                  fontSize: context.bodySmall.fontSize,
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: interviewCount.toString(),
+                    style: TextStyle(
+                      color: context.textColor3,
+                      fontWeight: context.titleMedium.fontWeight,
+                      fontSize: context.bodySmall.fontSize,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return null; // No tooltip for non-touched bars
+            }
+          },
+        ),
+        touchCallback: (FlTouchEvent event, BarTouchResponse? response) {
+          if (event is FlTapDownEvent &&
+              response != null &&
+              response.spot != null) {
+            final index = response.spot!.touchedBarGroupIndex;
+            onTouch(index); // Call the onTouch callback
+          } else {
+            onTouch(-1); // Reset if not touching
+          }
+        },
+      ),
+      titlesData: FlTitlesData(
+        show: true,
+        rightTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        topTitles: const AxisTitles(
+          sideTitles: SideTitles(showTitles: false),
+        ),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              // Show index as title (number)
+              return SideTitleWidget(
+                axisSide: meta.axisSide,
+                space: 16,
+                child: Text(
+                  "C${(value.toInt() + 1)}", // Display index as number
+                  style: TextStyle(
+                    color: context.textColor2,
+                    fontWeight: context.titleMedium.fontWeight,
+                    fontSize: context.bodyMedium.fontSize,
+                  ),
+                ),
+              );
+            },
+            reservedSize: 38,
+          ),
+        ),
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (value, meta) {
+              //print(value);
+              const List<double> uniqueValues = [
+                0,
+                1,
+                2,
+                3
+              ]; // Adjust as needed
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 0,
-      child: Text(text, style: style),
+              if (uniqueValues.contains(value)) {
+                TextStyle titleStyle = TextStyle(
+                  color: context.textColor2,
+                  fontWeight: context.titleMedium.fontWeight,
+                  fontSize: context.bodyMedium.fontSize,
+                );
+
+                return Text(
+                  value.toInt().toString(),
+                  style: titleStyle,
+                );
+              } else {
+                return SizedBox(); // Return an empty widget for non-integer values
+              }
+            },
+          ),
+        ),
+      ),
+      borderData: FlBorderData(show: false),
+      barGroups: barGroups(context),
+      gridData: const FlGridData(show: false),
     );
   }
+
+  List<BarChartGroupData> barGroups(BuildContext context) {
+    return companies.asMap().entries.map((entry) {
+      int index = entry.key;
+      int interviewCount = entry.value['interviewCount']; // Get interview count
+
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: interviewCount.toDouble(),
+            gradient: _barsGradient(context),
+          ),
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
+  }
+
+  LinearGradient _barsGradient(BuildContext context) => LinearGradient(
+        colors: [context.primary, context.secondary],
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+      );
 }
