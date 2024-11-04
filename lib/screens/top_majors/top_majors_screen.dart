@@ -189,29 +189,9 @@ class _Badge extends StatelessWidget {
         ],
       ),
       padding: EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Text(
-            skill,
-            style: TextStyle(color: context.textColor3),
-          ),
-          Row(
-            children: [
-              Icon(
-                Icons.computer_rounded,
-                color: context.textColor3,
-                size: 15,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                value,
-                style: TextStyle(color: context.textColor3),
-              )
-            ],
-          )
-        ],
+      child: Text(
+        skill,
+        style: TextStyle(color: context.textColor3),
       ),
     );
   }
