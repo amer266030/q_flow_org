@@ -75,12 +75,13 @@ class CompanyRatingScreen extends StatelessWidget {
                             ...cubit.questions.asMap().entries.map((entry) {
                               int index = entry.key;
                               CompanyRatingQuestion question = entry.value;
+
                               return Indicator(
                                 icon: CupertinoIcons.star_fill,
                                 showIndicator: false,
                                 text: 'Q${index + 1}: ${question.title}',
                                 count:
-                                    "${cubit.questionAvgRatings[question.id] ?? 0.0}",
+                                    "${cubit.questionAvgRatings[question.id]?.toStringAsFixed(1) ?? 0.0}",
                               );
                             }).toList(),
                           ],
@@ -158,9 +159,9 @@ class RatingCompaniesBarChart extends StatelessWidget {
                   fontWeight: context.titleMedium.fontWeight,
                   fontSize: context.bodySmall.fontSize,
                 ),
-                children: <TextSpan>[
+                children: [
                   TextSpan(
-                    text: rod.toY.toString(),
+                    text: rod.toY.toStringAsFixed(1).toString(),
                     style: TextStyle(
                       color: context.textColor3,
                       fontWeight: context.titleMedium.fontWeight,
@@ -202,20 +203,19 @@ class RatingCompaniesBarChart extends StatelessWidget {
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: (value, meta) {
-              TextStyle titleStyle = TextStyle(
-                color: context.textColor2,
-                fontWeight: context.titleMedium.fontWeight,
-                fontSize: context.bodyMedium.fontSize,
-              );
+              showTitles: true,
+              getTitlesWidget: (value, meta) {
+                TextStyle titleStyle = TextStyle(
+                  color: context.textColor2,
+                  fontWeight: context.titleMedium.fontWeight,
+                  fontSize: context.bodyMedium.fontSize,
+                );
 
-              return Text(
-                value.toInt().toString(),
-                style: titleStyle,
-              );
-            },
-          ),
+                if (value % 1 == 0 && value >= 0 && value <= 5) {
+                  return Text(value.toInt().toString(), style: titleStyle);
+                }
+                return Container();
+              }),
         ),
       ),
       borderData: FlBorderData(

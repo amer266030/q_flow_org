@@ -224,30 +224,31 @@ class CompanyInterviewsBarChart extends StatelessWidget {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            getTitlesWidget: (value, meta) {
-              //print(value);
-              const List<double> uniqueValues = [
-                0,
-                1,
-                2,
-                3
-              ]; // Adjust as needed
+            reservedSize: 25,
+            // getTitlesWidget: (value, meta) {
+            //   //print(value);
+            //   const List<double> uniqueValues = [
+            //     0,
+            //     1,
+            //     2,
+            //     3
+            //   ]; // Adjust as needed
 
-              if (uniqueValues.contains(value)) {
-                TextStyle titleStyle = TextStyle(
-                  color: context.textColor2,
-                  fontWeight: context.titleMedium.fontWeight,
-                  fontSize: context.bodyMedium.fontSize,
-                );
+            //   if (uniqueValues.contains(value)) {
+            //     TextStyle titleStyle = TextStyle(
+            //       color: context.textColor2,
+            //       fontWeight: context.titleMedium.fontWeight,
+            //       fontSize: context.bodyMedium.fontSize,
+            //     );
 
-                return Text(
-                  value.toInt().toString(),
-                  style: titleStyle,
-                );
-              } else {
-                return SizedBox(); // Return an empty widget for non-integer values
-              }
-            },
+            //     return Text(
+            //       value.toInt().toString(),
+            //       style: titleStyle,
+            //     );
+            //   } else {
+            //     return SizedBox(); // Return an empty widget for non-integer values
+            //   }
+            // },
           ),
         ),
       ),

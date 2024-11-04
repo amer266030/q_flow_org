@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:q_flow_organizer/screens/top_majors/network_functions.dart';
@@ -13,6 +14,8 @@ class TopMajorsCubit extends Cubit<TopMajorsState> {
   }
   Map<String, int> skillValues = {};
   final ValueNotifier<int> touchedIndex = ValueNotifier<int>(-1);
+  final ValueNotifier<String?> touchedSkill = ValueNotifier("");
+  PieTouchResponse? lastTouchResponse;
 
   initialLoad() async {
     emitLoading();
@@ -23,6 +26,15 @@ class TopMajorsCubit extends Cubit<TopMajorsState> {
   void updateTouchedIndex(int index) {
     touchedIndex.value = index; // Update the touched index
     emitUpdate(); // Emit updated state
+  }
+
+  void updateTouchedSkill(String skill) {
+    touchedSkill.value = skill;
+  }
+
+  void updateLastTouchResponse(PieTouchResponse? response) {
+    lastTouchResponse = response;
+    emitUpdate();
   }
 
   @override

@@ -2,7 +2,7 @@ import 'package:q_flow_organizer/model/rating/company_rating_question.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'client/supabase_mgr.dart';
 
-class SupabaseRating {
+class SupabaseCompanyRating {
   static final SupabaseClient supabase = SupabaseMgr.shared.supabase;
   static final String ratingTableKey = 'company_rating';
   static final String questionRatingTableKey = 'company_question_rating';
