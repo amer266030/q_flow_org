@@ -157,7 +157,7 @@ class RatingVisitorsBarChart extends StatelessWidget {
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: rod.toY.toStringAsFixed(2).toString(),
+                    text: rod.toY.toStringAsFixed(1).toString(),
                     style: TextStyle(
                       color: context.textColor3,
                       fontWeight: context.titleMedium.fontWeight,
