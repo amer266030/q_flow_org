@@ -232,20 +232,20 @@ class _StatCardsView extends StatelessWidget {
                   ),
                 ),
               ),
-              if (totalInvitedVisitors == 0)
-                Container()
-              else
-                Container(
-                  height: context.screenWidth * 0.3,
-                  width: context.screenWidth * 0.3,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 7,
-                    color: context.primary,
-                    backgroundColor: context.bg2,
-                    value: numVisitors / totalInvitedVisitors,
-                    strokeCap: StrokeCap.round,
-                  ),
+              // if (totalInvitedVisitors == 0)
+              //   Container()
+              // else
+              Container(
+                height: context.screenWidth * 0.3,
+                width: context.screenWidth * 0.3,
+                child: CircularProgressIndicator(
+                  strokeWidth: 7,
+                  color: context.primary,
+                  backgroundColor: context.bg2,
+                  value: numVisitors / totalInvitedVisitors,
+                  strokeCap: StrokeCap.round,
                 ),
+              ),
             ],
           ),
         ),

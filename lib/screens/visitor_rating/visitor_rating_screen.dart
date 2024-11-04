@@ -208,7 +208,7 @@ class RatingVisitorsBarChart extends StatelessWidget {
                 fontSize: context.bodyMedium.fontSize,
               );
 
-              if (value % 1 == 0 && value >= 0 && value <= 5) {
+              if (value % 1 == 0 && value >= 5 && value <= 5) {
                 return Text(value.toInt().toString(), style: titleStyle);
               }
               return Container();
