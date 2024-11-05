@@ -148,139 +148,101 @@ class _StatCardsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Column(
-          children: [
-            SizedBox(
-              height: 80,
-            ),
-            Container(
-              height: context.screenWidth * 0.27,
-              width: context.screenWidth * 0.27,
-              child: Card(
-                shape: CircleBorder(),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        Expanded(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 80,
+              ),
+              Row(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Icon(
-                        CupertinoIcons.building_2_fill,
-                        color: context.textColor3,
-                      ),
-                      Text(
-                        '$numCompanies',
-                        style: TextStyle(
-                          fontSize: context.titleSmall.fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: context.primary,
+                      Container(
+                        height: context.screenWidth * 0.26,
+                        width: context.screenWidth * 0.26,
+                        child: Card(
+                          color: context.bg2,
+                          shape: CircleBorder(),
+                          elevation: 9,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 4),
+                                Text(
+                                  '$numCompanies',
+                                  style: TextStyle(
+                                    fontSize: context.titleSmall.fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.textColor1,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'View Companies',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: context.bodyMedium.fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      Text(
-                        'Companies',
-                        style: TextStyle(
-                          fontSize: context.bodySmall.fontSize,
-                          color: context.textColor1,
+                      // if (totalInvitedVisitors == 0)
+                      //   Container()
+                      // else
+                      Container(
+                        height: context.screenWidth * 0.26,
+                        width: context.screenWidth * 0.26,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 7,
+                          color: context.primary,
+                          backgroundColor: context.bg1,
+                          value: 2 / 100,
+                          strokeCap: StrokeCap.round,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: context.screenWidth * 0.3,
-                width: context.screenWidth * 0.3,
-                child: Card(
-                  shape: CircleBorder(),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 4),
-                        Icon(
-                          CupertinoIcons.person_3_fill,
-                          color: context.textColor3,
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          '$numVisitors',
-                          style: TextStyle(
-                            fontSize: context.titleSmall.fontSize,
-                            fontWeight: FontWeight.bold,
-                            color: context.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Visitors',
-                          style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            color: context.textColor1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // if (totalInvitedVisitors == 0)
-              //   Container()
-              // else
-              Container(
-                height: context.screenWidth * 0.3,
-                width: context.screenWidth * 0.3,
-                child: CircularProgressIndicator(
-                  strokeWidth: 7,
-                  color: context.primary,
-                  backgroundColor: context.bg2,
-                  value: numVisitors / totalInvitedVisitors,
-                  strokeCap: StrokeCap.round,
-                ),
+                ],
               ),
             ],
           ),
         ),
         Column(
           children: [
-            SizedBox(
-              height: 80,
-            ),
             Container(
-              height: context.screenWidth * 0.27,
-              width: context.screenWidth * 0.27,
+              height: context.screenWidth * 0.3,
+              width: context.screenWidth * 0.3,
               child: Card(
+                color: context.bg2,
                 shape: CircleBorder(),
-                elevation: 4,
+                elevation: 6,
                 child: Padding(
-                  padding: const EdgeInsets.all(8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Icon(
-                        CupertinoIcons.rectangle_stack_person_crop_fill,
-                        color: context.textColor3,
-                      ),
                       Text(
                         '$numInterviews',
                         style: TextStyle(
                           fontSize: context.titleSmall.fontSize,
                           fontWeight: FontWeight.bold,
-                          color: context.primary,
+                          color: context.textColor1,
                         ),
                       ),
                       Text(
                         'Interviews',
                         style: TextStyle(
-                          fontSize: context.bodySmall.fontSize,
+                          fontSize: context.bodyLarge.fontSize,
                           color: context.textColor1,
                         ),
                       ),
@@ -290,6 +252,77 @@ class _StatCardsView extends StatelessWidget {
               ),
             ),
           ],
+        ),
+        SizedBox(
+          width: 10,
+        ),
+        Expanded(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 80,
+              ),
+              Row(
+                children: [
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        height: context.screenWidth * 0.26,
+                        width: context.screenWidth * 0.26,
+                        child: Card(
+                          color: context.bg2,
+                          shape: CircleBorder(),
+                          elevation: 9,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: 4),
+                                Text(
+                                  '$numVisitors',
+                                  style: TextStyle(
+                                    fontSize: context.titleSmall.fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.textColor1,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'View\nVisitors',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: context.bodyMedium.fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: context.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // if (totalInvitedVisitors == 0)
+                      //   Container()
+                      // else
+                      Container(
+                        height: context.screenWidth * 0.26,
+                        width: context.screenWidth * 0.26,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 7,
+                          color: context.primary,
+                          backgroundColor: context.bg1,
+                          value: 2 / 100,
+                          strokeCap: StrokeCap.round,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );

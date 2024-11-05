@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
@@ -56,11 +57,25 @@ class AuthScreen extends StatelessWidget {
                               ? OtpFormView(
                                   email: cubit.emailController.text,
                                   goBack: cubit.toggleIsOtp,
-                                  verifyOTP: (otp) =>
-                                      cubit.verifyOTP(context, otp))
+                                  verifyOTP: (otp) {
+                                    if (otp != -1) {
+                                      cubit.verifyOTP(context, otp);
+                                    } else {
+                                      cubit.showSnackBar(
+                                        context,
+                                        'Please enter the OTP.',
+                                        AnimatedSnackBarType.warning,
+                                      );
+                                    }
+                                  },
+                                )
                               : LoginFormView(
                                   controller: cubit.emailController,
-                                  callback: () => cubit.sendOTP(context));
+                                  callback: () {
+                                    if (cubit.validateEmail(context)) {
+                                      cubit.sendOTP(context);
+                                    }
+                                  });
                         },
                       ),
                     ],

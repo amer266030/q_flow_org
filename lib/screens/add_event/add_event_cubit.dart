@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:q_flow_organizer/extensions/date_ext.dart';
+import 'package:q_flow_organizer/reusable_components/animated_snack_bar.dart';
 import 'package:q_flow_organizer/utils/excel_util.dart';
 import 'package:uuid/uuid.dart';
 
@@ -46,6 +48,19 @@ class AddEventCubit extends Cubit<AddEventState> {
     }
   }
 
+  bool validateFields() {
+    final currentDate = DateTime.now();
+    if (nameController.text.isEmpty ||
+        locationController.text.isEmpty ||
+        startDate.isBefore(currentDate) ||
+        companiesFile ==null ||
+        usersFile == null ||
+        endDate.isBefore(startDate)) {
+      return false;
+    }
+    return true;
+  }
+
   void getImage() async {
     final img = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (img != null) imgUrl = File(img.path);
@@ -80,6 +95,13 @@ class AddEventCubit extends Cubit<AddEventState> {
       visitorEmails.add(newItem);
     }
     emitUpdate();
+  }
+
+    void showSnackBar(
+      BuildContext context, String msg, AnimatedSnackBarType type) {
+    if (context.mounted) {
+      animatedSnakbar(msg: msg, type: type).show(context);
+    }
   }
 
   @override
