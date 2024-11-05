@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:q_flow_organizer/supabase/supabase_interview.dart';
+
+import 'package:q_flow_organizer/screens/most_applied/network_functions.dart';
 
 part 'most_applied_state.dart';
 
@@ -14,17 +17,7 @@ class MostAppliedCubit extends Cubit<MostAppliedState> {
   initialLoad() async {
     emitLoading();
     await fetchInterviewCounts();
-  }
-
-  Future<void> fetchInterviewCounts() async {
-    try {
-      List<Map<String, dynamic>> interviewCounts =
-          await SupabaseInterview.fetchInterviewCountsByCompanies();
-      companies = interviewCounts; // Now holds the company names and counts
-      emitUpdate();
-    } catch (error) {
-      emitError(error.toString());
-    }
+    emitUpdate();
   }
 
   void updateTouchedGroupIndex(int index) {

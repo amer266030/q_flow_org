@@ -61,6 +61,7 @@ class EventsCubit extends Cubit<EventsState> {
 
   logout(BuildContext context) => Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));
+      
 
   @override
   void emit(EventsState state) {

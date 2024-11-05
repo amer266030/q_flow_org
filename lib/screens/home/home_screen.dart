@@ -6,6 +6,7 @@ import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
+import 'package:q_flow_organizer/screens/home/subviwes/stat_cards_view.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
@@ -59,11 +60,15 @@ class HomeScreen extends StatelessWidget {
                     _SectionHeaderView(title: 'Overall Stats'),
                     BlocBuilder<HomeCubit, HomeState>(
                       builder: (context, state) {
-                        return _StatCardsView(
+                        return StatCardsView(
                           totalInvitedVisitors: cubit.totalInvitedVisitors,
                           numCompanies: cubit.numCompanies,
                           numVisitors: cubit.numVisitors,
                           numInterviews: cubit.numInterviews,
+                          viewCompanies: () =>
+                              cubit.navigateToCompanies(context),
+                          viewInterviews: () {},
+                          viewVisitors: () => cubit.navigateToVisitors(context),
                         );
                       },
                     ),
@@ -130,205 +135,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _StatCardsView extends StatelessWidget {
-  const _StatCardsView({
-    super.key,
-    required this.numCompanies,
-    required this.numVisitors,
-    required this.numInterviews,
-    required this.totalInvitedVisitors,
-  });
-
-  final int numCompanies;
-  final int numVisitors;
-  final int numInterviews;
-  final int totalInvitedVisitors;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 80,
-              ),
-              Row(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        height: context.screenWidth * 0.26,
-                        width: context.screenWidth * 0.26,
-                        child: Card(
-                          color: context.bg2,
-                          shape: CircleBorder(),
-                          elevation: 9,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 4),
-                                Text(
-                                  '$numCompanies',
-                                  style: TextStyle(
-                                    fontSize: context.titleSmall.fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: context.textColor1,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'View Companies',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: context.bodyMedium.fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: context.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      // if (totalInvitedVisitors == 0)
-                      //   Container()
-                      // else
-                      Container(
-                        height: context.screenWidth * 0.26,
-                        width: context.screenWidth * 0.26,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 7,
-                          color: context.primary,
-                          backgroundColor: context.bg1,
-                          value: 2 / 100,
-                          strokeCap: StrokeCap.round,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Column(
-          children: [
-            Container(
-              height: context.screenWidth * 0.3,
-              width: context.screenWidth * 0.3,
-              child: Card(
-                color: context.bg2,
-                shape: CircleBorder(),
-                elevation: 6,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        '$numInterviews',
-                        style: TextStyle(
-                          fontSize: context.titleSmall.fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: context.textColor1,
-                        ),
-                      ),
-                      Text(
-                        'Interviews',
-                        style: TextStyle(
-                          fontSize: context.bodyLarge.fontSize,
-                          color: context.textColor1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 80,
-              ),
-              Row(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        height: context.screenWidth * 0.26,
-                        width: context.screenWidth * 0.26,
-                        child: Card(
-                          color: context.bg2,
-                          shape: CircleBorder(),
-                          elevation: 9,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 4),
-                                Text(
-                                  '$numVisitors',
-                                  style: TextStyle(
-                                    fontSize: context.titleSmall.fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: context.textColor1,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'View\nVisitors',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: context.bodyMedium.fontSize,
-                                    fontWeight: FontWeight.bold,
-                                    color: context.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      // if (totalInvitedVisitors == 0)
-                      //   Container()
-                      // else
-                      Container(
-                        height: context.screenWidth * 0.26,
-                        width: context.screenWidth * 0.26,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 7,
-                          color: context.primary,
-                          backgroundColor: context.bg1,
-                          value: 2 / 100,
-                          strokeCap: StrokeCap.round,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _HeaderView extends StatelessWidget {
   const _HeaderView({
     required this.onBack,
@@ -353,57 +159,62 @@ class _HeaderView extends StatelessWidget {
           padding: const EdgeInsets.all(2),
           child: AspectRatio(
             aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: event.imgUrl == null
-                  ? Image(image: Img.logoOrange, fit: BoxFit.cover)
-                  : FadeInImage(
-                      placeholder: Img.logoOrange,
-                      image: NetworkImage(event.imgUrl ?? ''),
-                      fit: BoxFit.cover,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image(image: Img.logoOrange, fit: BoxFit.cover);
-                      },
-                    ),
+            child: InkWell(
+              onTap: onEdit,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: event.imgUrl == null
+                    ? Image(image: Img.logoOrange, fit: BoxFit.cover)
+                    : FadeInImage(
+                        placeholder: Img.logoOrange,
+                        image: NetworkImage(event.imgUrl ?? ''),
+                        fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image(
+                              image: Img.logoOrange, fit: BoxFit.cover);
+                        },
+                      ),
+              ),
             ),
           ),
         )),
         const SizedBox(width: 8),
         Expanded(
           flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  InkWell(
-                      onTap: onEdit,
-                      child: Icon(
-                        CupertinoIcons.square_pencil,
-                        color: context.primary,
-                        size: context.titleSmall.fontSize,
-                      )),
-                  SizedBox(width: 4),
-                  Text(event.name ?? '',
-                      style: context.bodyMedium, maxLines: 1, softWrap: true)
-                ],
-              ),
-              SizedBox(height: 4),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(
-                    CupertinoIcons.calendar,
-                    color: context.textColor2,
-                    size: context.titleSmall.fontSize,
-                  ),
-                  SizedBox(width: 4),
-                  Text('${event.startDate} - ${event.endDate}',
-                      style: context.bodySmall, maxLines: 1, softWrap: true),
-                ],
-              ),
-            ],
+          child: InkWell(
+            onTap: onEdit,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.edit,
+                      color: context.primary,
+                      size: context.titleSmall.fontSize,
+                    ),
+                    SizedBox(width: 4),
+                    Text(event.name ?? '',
+                        style: context.bodyMedium, maxLines: 1, softWrap: true)
+                  ],
+                ),
+                SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Icon(
+                      CupertinoIcons.calendar,
+                      color: context.primary,
+                      size: context.titleSmall.fontSize,
+                    ),
+                    SizedBox(width: 4),
+                    Text('${event.startDate} - ${event.endDate}',
+                        style: context.bodySmall, maxLines: 1, softWrap: true),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         Expanded(

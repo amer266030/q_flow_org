@@ -183,39 +183,24 @@ class RatingVisitorsBarChart extends StatelessWidget {
         },
       ),
       titlesData: FlTitlesData(
-        show: true,
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: (value, meta) => getTitles(value, meta, context),
-            reservedSize: 38,
+          show: true,
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
           ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: (value, meta) {
-              print(value);
-              TextStyle titleStyle = TextStyle(
-                color: context.textColor2,
-                fontWeight: context.titleMedium.fontWeight,
-                fontSize: context.bodyMedium.fontSize,
-              );
-
-              if (value % 1 == 0 && value >= 5 && value <= 5) {
-                return Text(value.toInt().toString(), style: titleStyle);
-              }
-              return Container();
-            },
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
           ),
-        ),
-      ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) => getTitles(value, meta, context),
+              reservedSize: 38,
+            ),
+          ),
+          leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+            showTitles: false,
+          ))),
       borderData: FlBorderData(
         show: false,
       ),
@@ -233,6 +218,7 @@ class RatingVisitorsBarChart extends StatelessWidget {
         x: index,
         barRods: [
           BarChartRodData(
+            width: 15,
             toY: rating,
             gradient: _barsGradient(context),
           ),

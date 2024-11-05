@@ -11,4 +11,6 @@ extension Img on ImageProvider {
   //splash
   static const splashLight = AssetImage('assets/splash/org_splash.gif');
   static const splashDark = AssetImage('assets/splash/org_splash_dark.gif');
+
+  static get logoTurquoise => null;
 }

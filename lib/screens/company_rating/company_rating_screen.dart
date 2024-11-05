@@ -27,9 +27,17 @@ class CompanyRatingScreen extends StatelessWidget {
         final cubit = context.read<CompanyRatingCubit>();
         return BlocListener<CompanyRatingCubit, CompanyRatingState>(
           listener: (context, state) {
+            if (cubit.previousState is LoadingState) {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            }
+
             if (state is LoadingState) {
               showLoadingDialog(context);
-            } else if (state is ErrorState) {
+            }
+
+            if (state is ErrorState) {
               showErrorDialog(context, state.msg);
             }
           },
@@ -44,6 +52,8 @@ class CompanyRatingScreen extends StatelessWidget {
                       builder: (context, state) {
                         if (state is LoadingState) {
                           return Center(child: CircularProgressIndicator());
+                        } else if (state is ErrorState) {
+                          return Center(child: Text('Error: ${state.msg}'));
                         } else if (cubit.questions.isEmpty ||
                             cubit.questionAvgRatings.isEmpty) {
                           return Center(child: Text("No data available."));
@@ -203,19 +213,8 @@ class RatingCompaniesBarChart extends StatelessWidget {
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
-              showTitles: true,
-              getTitlesWidget: (value, meta) {
-                TextStyle titleStyle = TextStyle(
-                  color: context.textColor2,
-                  fontWeight: context.titleMedium.fontWeight,
-                  fontSize: context.bodyMedium.fontSize,
-                );
-
-                if (value % 1 == 0 && value >= 0 && value <= 5) {
-                  return Text(value.toInt().toString(), style: titleStyle);
-                }
-                return Container();
-              }),
+            showTitles: false,
+          ),
         ),
       ),
       borderData: FlBorderData(
@@ -235,6 +234,7 @@ class RatingCompaniesBarChart extends StatelessWidget {
         x: index,
         barRods: [
           BarChartRodData(
+            width: 15,
             toY: rating,
             gradient: _barsGradient(context),
           ),

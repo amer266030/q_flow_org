@@ -7,17 +7,15 @@ import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 class VisitorCard extends StatelessWidget {
   const VisitorCard({
     super.key,
-    required this.visitor, this.rateVisitor,
+    required this.visitor,
   });
   final Visitor visitor;
-  final Function()? rateVisitor;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
-         onTap: rateVisitor,
         child: Container(
           decoration: BoxDecoration(
               color: context.bg2,
@@ -42,8 +40,8 @@ class VisitorCard extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.all(4),
-                          child:
-                              AspectRatio(aspectRatio: 1, child: VisitorAvatar()),
+                          child: AspectRatio(
+                              aspectRatio: 1, child: VisitorAvatar()),
                         ),
                       ),
                       Expanded(

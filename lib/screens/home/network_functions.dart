@@ -40,6 +40,18 @@ extension NetworkFunctions on HomeCubit {
       print('Error fetching invited visitors: ${e.toString()}');
     }
   }
+  Future<void> fetchInvitedCompanies() async {
+    try {
+      final res = await SupabaseEvent
+          .fetchInvitedCompanies(); // This should fetch invited visitors
+      invitedCompanies = res ?? [];
+      totalInvitedCompanies = invitedCompanies.length; // Update total count
+       emitUpdate();
+      print('Total invited companies: $totalInvitedCompanies');
+    } catch (e) {
+      print('Error fetching invited companies: ${e.toString()}');
+    }
+  }
 // Interviews
 
   Future<void> TotalNumOfInterviews() async {

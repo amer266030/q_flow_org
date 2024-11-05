@@ -2,13 +2,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/model/user/company.dart';
+import 'package:q_flow_organizer/extensions/img_ext.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
 import 'package:q_flow_organizer/reusable_components/indicator.dart';
 import 'package:q_flow_organizer/reusable_components/page_header_view.dart';
 import 'package:q_flow_organizer/screens/most_applied/most_applied_cubit.dart';
-import 'package:q_flow_organizer/theme_data/app_colors.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
@@ -36,17 +35,17 @@ class MostAppliedScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(24.0),
                   child: BlocBuilder<MostAppliedCubit, MostAppliedState>(
                     builder: (context, state) {
-                      // Handle loading state
                       if (state is LoadingState) {
-                        return Center(child: CircularProgressIndicator());
+                        return Center(
+                            child: Image(
+                          image: Img.loading,
+                        ));
                       }
 
-                      // Handle error state
                       if (state is ErrorState) {
                         return Center(child: Text(""));
                       }
 
-                      // Assume the state is loaded and we have companies
                       final cubit = context.read<MostAppliedCubit>();
 
                       return ListView(
@@ -223,32 +222,7 @@ class CompanyInterviewsBarChart extends StatelessWidget {
         ),
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 25,
-            // getTitlesWidget: (value, meta) {
-            //   //print(value);
-            //   const List<double> uniqueValues = [
-            //     0,
-            //     1,
-            //     2,
-            //     3
-            //   ]; // Adjust as needed
-
-            //   if (uniqueValues.contains(value)) {
-            //     TextStyle titleStyle = TextStyle(
-            //       color: context.textColor2,
-            //       fontWeight: context.titleMedium.fontWeight,
-            //       fontSize: context.bodyMedium.fontSize,
-            //     );
-
-            //     return Text(
-            //       value.toInt().toString(),
-            //       style: titleStyle,
-            //     );
-            //   } else {
-            //     return SizedBox(); // Return an empty widget for non-integer values
-            //   }
-            // },
+            showTitles: false,
           ),
         ),
       ),
@@ -267,6 +241,7 @@ class CompanyInterviewsBarChart extends StatelessWidget {
         x: index,
         barRods: [
           BarChartRodData(
+            width: 15,
             toY: interviewCount.toDouble(),
             gradient: _barsGradient(context),
           ),

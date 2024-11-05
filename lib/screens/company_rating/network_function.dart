@@ -3,10 +3,14 @@ import 'package:q_flow_organizer/supabase/supabase_company_rating.dart';
 
 extension NetworkFunctions on CompanyRatingCubit {
   Future<void> avgRatings() async {
-    questionAvgRatings =
-        await SupabaseCompanyRating.fetchAvgRatings(); // Fetch all averages at once
-    print('Number of average ratings: ${questionAvgRatings.length}');
-    emitUpdate();
+    try {
+      questionAvgRatings = await SupabaseCompanyRating
+          .fetchAvgRatings(); // Fetch all averages at once
+      print('Number of average ratings: ${questionAvgRatings.length}');
+      emitUpdate();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // Rating Questions
