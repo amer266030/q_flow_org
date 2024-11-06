@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:q_flow_organizer/extensions/img_ext.dart';
 import 'package:q_flow_organizer/model/user/visitor.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
@@ -15,8 +16,7 @@ class VisitorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: InkWell(
-        child: Container(
+      child: Container(
           decoration: BoxDecoration(
               color: context.bg2,
               shape: BoxShape.rectangle,
@@ -34,62 +34,59 @@ class VisitorCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 2,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: AspectRatio(
-                              aspectRatio: 1, child: VisitorAvatar()),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Text(visitor.fName ?? '',
-                                      style: context.bodyMedium,
-                                      maxLines: 1,
-                                      softWrap: true),
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Text(visitor.lName ?? '',
-                                      style: context.bodyMedium,
-                                      maxLines: 1,
-                                      softWrap: true),
-                                ],
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: visitor.avatarUrl == null
+                            ? VisitorAvatar()
+                            : FadeInImage(
+                                placeholder: Img.logoOrange,
+                                image: NetworkImage(visitor.avatarUrl ?? ''),
+                                fit: BoxFit.cover,
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                  return VisitorAvatar();
+                                },
                               ),
-                              Text(visitor.id ?? '',
-                                  style: TextStyle(
-                                      fontSize: context.bodySmall.fontSize,
-                                      color: context.textColor1),
-                                  maxLines: 3,
-                                  softWrap: true),
-                              Text('Front end',
-                                  style: TextStyle(
-                                      fontSize: context.bodySmall.fontSize,
-                                      color: context.textColor1),
-                                  maxLines: 3,
-                                  softWrap: true),
-                            ],
-                          ),
-                        ),
                       ),
-                    ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Text("${visitor.fName} ${visitor.lName}",
+                                style: TextStyle(
+                                    fontSize: context.bodyLarge.fontSize,
+                                    fontWeight: FontWeight.w600),
+                                maxLines: 1,
+                                softWrap: true),
+                          ],
+                        ),
+                        Text(visitor.id ?? '',
+                            style: TextStyle(
+                              fontSize: context.bodyMedium.fontSize,
+                            ),
+                            maxLines: 1,
+                            softWrap: true),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-        ),
-      ),
+          )),
     );
   }
 }
@@ -103,7 +100,7 @@ class VisitorAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             colors: [
               context.primary,

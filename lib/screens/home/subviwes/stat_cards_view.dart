@@ -32,22 +32,21 @@ class StatCardsView extends StatelessWidget {
         Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 90, left: 4, right: 4),
+              padding: const EdgeInsets.only(top: 90, left: 2, right: 2),
               child: InkWell(
                 onTap: viewCompanies,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      height: context.screenWidth * 0.26,
-                      width: context.screenWidth * 0.26,
+                      height: context.screenWidth * 0.27,
+                      width: context.screenWidth * 0.27,
                       child: Card(
                         color: context.bg2,
                         shape: CircleBorder(),
                         elevation: 12,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -67,7 +66,7 @@ class StatCardsView extends StatelessWidget {
                                 'Companies',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: context.bodyMedium.fontSize,
+                                  fontSize: context.bodySmall.fontSize,
                                   color: context.textColor1,
                                 ),
                               ),
@@ -137,22 +136,21 @@ class StatCardsView extends StatelessWidget {
         Row(
           children: [
             Padding(
-              padding: const EdgeInsets.only(right: 4.0, top: 90, left: 4),
+              padding: const EdgeInsets.only(right: 2.0, top: 90, left: 2),
               child: InkWell(
                 onTap: viewVisitors,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     Container(
-                      height: context.screenWidth * 0.26,
-                      width: context.screenWidth * 0.26,
+                      height: context.screenWidth * 0.27,
+                      width: context.screenWidth * 0.27,
                       child: Card(
                         color: context.bg2,
                         shape: CircleBorder(),
                         elevation: 9,
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -171,8 +169,7 @@ class StatCardsView extends StatelessWidget {
                                 'Visitors',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  fontSize: context.bodyMedium.fontSize,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: context.bodySmall.fontSize,
                                   color: context.textColor1,
                                 ),
                               ),

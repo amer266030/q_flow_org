@@ -18,15 +18,17 @@ class CompaniesScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Attended Companies',
-                style: TextStyle(
-                  fontSize: context.bodyLarge.fontSize,
-                  fontWeight: FontWeight.bold,
-                  color: context.textColor1,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  'Attended Companies',
+                  style: TextStyle(
+                    fontSize: context.bodyLarge.fontSize,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor1,
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
               Expanded(
                 child: companies.isEmpty
                     ? const Center(child: Text('No companies Attended yet.'))

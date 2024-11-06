@@ -67,7 +67,8 @@ class HomeScreen extends StatelessWidget {
                           numInterviews: cubit.numInterviews,
                           viewCompanies: () =>
                               cubit.navigateToCompanies(context),
-                          viewInterviews: () {},
+                          viewInterviews: () =>
+                              cubit.navigateToInterviews(context),
                           viewVisitors: () => cubit.navigateToVisitors(context),
                         );
                       },

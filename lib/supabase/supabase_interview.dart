@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:q_flow_organizer/model/user/company.dart';
+import 'package:q_flow_organizer/model/user/visitor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/interview.dart';
@@ -9,15 +11,13 @@ class SupabaseInterview {
   static final SupabaseClient supabase = SupabaseMgr.shared.supabase;
   static final String tableKey = 'interview';
   static final String companyTable = 'company';
+  static const String visitorTable = 'visitor';
 
   static Future<List<Map<String, dynamic>>>
       fetchInterviewCountsByCompanies() async {
-    // Step 1: Fetch all interviews
     final response = await supabase.from(tableKey).select('company_id');
 
-    // Check if the response contains data
     if (response is List) {
-      // Step 2: Count interviews per company
       Map<String, int> companyInterviewCounts = {};
 
       for (var interview in response) {
@@ -26,7 +26,6 @@ class SupabaseInterview {
             (companyInterviewCounts[companyId] ?? 0) + 1;
       }
 
-      // Step 3: Fetch company details for each company_id
       List<Map<String, dynamic>> interviewCounts = [];
       for (var entry in companyInterviewCounts.entries) {
         String companyId = entry.key;
@@ -48,7 +47,6 @@ class SupabaseInterview {
 
       return interviewCounts;
     } else {
-      // Return an empty list if no interviews found
       return [];
     }
   }
@@ -62,5 +60,59 @@ class SupabaseInterview {
     return (response as List)
         .map((interview) => interview['id'] as String)
         .toList();
+  }
+
+  static Future<List<Map<String, dynamic>>>
+      fetchCompletedInterviewDetails() async {
+    final completedInterviewIds = await fetchCompletedInterviewIds();
+    List<Map<String, dynamic>> interviewDetails = [];
+
+    print("Completed Interview IDs: $completedInterviewIds");
+
+    for (var interviewId in completedInterviewIds) {
+      final interviewResponse = await supabase
+          .from(tableKey)
+          .select('visitor_id, company_id')
+          .eq('id', interviewId)
+          .single();
+
+      if (interviewResponse != null) {
+        String visitorId = interviewResponse['visitor_id'] as String;
+        String companyId = interviewResponse['company_id'] as String;
+
+        // Fetch company details (name, logo URL)
+        final companyResponse = await supabase
+            .from(companyTable)
+            .select(
+                'name, logo_url') // Removed social_links from the select statement
+            .eq('id', companyId)
+            .single();
+
+        // Fetch visitor details (name, avatar URL, and ID)
+        final visitorResponse = await supabase
+            .from(visitorTable)
+            .select('f_name, l_name, avatar_url ')
+            .eq('id', visitorId)
+            .single();
+
+        print("Fetched Company: $companyResponse");
+        print("Fetched Visitor: $visitorResponse");
+
+        // If both company and visitor data are available, add them to the result list
+        if (companyResponse != null && visitorResponse != null) {
+          final company = Company.fromJson(companyResponse);
+          final visitor = Visitor.fromJson(visitorResponse);
+
+          interviewDetails.add({
+            'interviewId': interviewId,
+            'company': company,
+            'visitor': visitor,
+          });
+        }
+      }
+    }
+
+    print("Combined Interview Details: $interviewDetails");
+    return interviewDetails;
   }
 }
