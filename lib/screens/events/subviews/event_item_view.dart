@@ -37,14 +37,14 @@ class EventItemView extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(32),
                   child: event.imgUrl == null
-                      ? Image(image: Img.logoPurple, fit: BoxFit.cover)
+                      ? Image(image: Img.logoOrange, fit: BoxFit.cover)
                       : FadeInImage(
-                          placeholder: Img.logoTurquoise,
+                          placeholder: Img.logoOrange,
                           image: NetworkImage(event.imgUrl ?? ''),
                           fit: BoxFit.cover,
                           imageErrorBuilder: (context, error, stackTrace) {
                             return Image(
-                                image: Img.logoTurquoise, fit: BoxFit.cover);
+                                image: Img.logoOrange, fit: BoxFit.cover);
                           },
                         ),
                 ),

@@ -10,17 +10,16 @@ import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 
 class TopMajorsScreen extends StatelessWidget {
   const TopMajorsScreen({super.key});
+  final List<Color> orangeColors = const [
+    Color(0xFFF16E00),
+    Color(0xFFFF8C00),
+    Color(0xFFFF7F50),
+    Color(0xFFFFB26F),
+    Color(0xFFFFB38E),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, Color> data = {
-      'Front-end Development': context.primary,
-      'Back-end Development': context.primary.withOpacity(0.8),
-      'Cybersecurity': context.primary.withOpacity(0.7),
-      'Web Development': context.primary.withOpacity(0.6),
-      'Mobile Development': context.primary.withOpacity(0.5),
-    };
-
     return BlocProvider(
       create: (context) => TopMajorsCubit(),
       child: Builder(builder: (context) {
@@ -34,61 +33,100 @@ class TopMajorsScreen extends StatelessWidget {
                 PageHeaderView(title: 'Top In-demand\nMajors Chart'),
                 BlocBuilder<TopMajorsCubit, TopMajorsState>(
                   builder: (context, state) {
-                    return AspectRatio(
-                      aspectRatio: 1.1,
-                      child: Card(
-                        color: context.bg2,
-                        child: PieChart(
-                          PieChartData(
-                            sections: showingSections(
-                                context, cubit.touchedIndex.value),
-                            borderData: FlBorderData(show: false),
-                            centerSpaceRadius: 70,
-                            sectionsSpace: 3,
-                            pieTouchData: PieTouchData(
-                              touchCallback:
-                                  (FlTouchEvent event, pieTouchResponse) {
-                                if (!event.isInterestedForInteractions ||
-                                    pieTouchResponse == null ||
-                                    pieTouchResponse.touchedSection == null) {
-                                  cubit.updateTouchedIndex(
-                                      -1); // Reset touched index
-                                  return;
-                                }
-                                final index = pieTouchResponse
-                                    .touchedSection!.touchedSectionIndex;
-                                cubit.updateTouchedIndex(
-                                    index); // Update touched index
-                              },
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 1.1,
+                          child: Card(
+                            color: context.bg2,
+                            child: Stack(
+                              children: [
+                                PieChart(
+                                  PieChartData(
+                                    sections: showingSections(
+                                        context,
+                                        cubit.touchedIndex.value,
+                                        cubit.skillValues),
+                                    borderData: FlBorderData(show: false),
+                                    centerSpaceRadius: 70,
+                                    sectionsSpace: 3,
+                                    pieTouchData: PieTouchData(
+                                      touchCallback: (FlTouchEvent event,
+                                          pieTouchResponse) {
+                                        if (!event
+                                                .isInterestedForInteractions ||
+                                            pieTouchResponse == null ||
+                                            pieTouchResponse.touchedSection ==
+                                                null) {
+                                          // Reset touched index
+                                          cubit.updateTouchedIndex(-1);
+                                          return;
+                                        }
+                                        final index = pieTouchResponse
+                                            .touchedSection!
+                                            .touchedSectionIndex;
+
+                                        if (index >= 0 &&
+                                            index < cubit.skillValues.length) {
+                                          cubit.updateTouchedIndex(
+                                              index); // Update touched index
+                                          // Update the currently touched skill
+                                          cubit.updateTouchedSkill(cubit
+                                              .skillValues.keys
+                                              .toList()[index]);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                // Add the Badge here conditionally
+                                if (cubit.touchedIndex.value != -1)
+                                  Positioned(
+                                    top: 20,
+                                    right: 20,
+                                    child: _Badge(
+                                      value: cubit.skillValues[
+                                                  cubit.touchedSkill.value] !=
+                                              null
+                                          ? cubit.skillValues[
+                                                  cubit.touchedSkill.value]
+                                              .toString()
+                                          : '0',
+                                      skill: cubit.touchedSkill.value ?? '',
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'List of Majors',
-                        style: TextStyle(
+                        SizedBox(height: 50),
+                        Text(
+                          'Top In-demand Majors List',
+                          style: TextStyle(
                             fontSize: context.titleSmall.fontSize,
                             fontWeight: FontWeight.bold,
-                            color: context.textColor1),
-                      ),
-                      SizedBox(height: 20),
-                      ...data.entries.map((entry) {
-                        return Indicator(
-                          color: entry.value,
-                          text: entry.key,
-                        );
-                      }).toList(),
-                    ],
-                  ),
+                            color: context.textColor1,
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        ...cubit.skillValues.entries.map((entry) {
+                          final skill = entry.key;
+                          final count = entry.value;
+                          final index =
+                              cubit.skillValues.keys.toList().indexOf(skill);
+
+                          return Indicator(
+                            color: orangeColors[index % orangeColors.length],
+                            showIndicator: true,
+                            text: skill,
+                            icon: Icons.computer_rounded,
+                            count: "$count",
+                          );
+                        }).toList(),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -99,15 +137,7 @@ class TopMajorsScreen extends StatelessWidget {
   }
 
   List<PieChartSectionData> showingSections(
-      BuildContext context, int touchedIndex) {
-    final Map<String, int> values = {
-      'Front-end Development': 30,
-      'Back-end Development': 10,
-      'Cybersecurity': 10,
-      'Web Development': 10,
-      'Mobile Development': 10,
-    };
-
+      BuildContext context, int touchedIndex, Map<String, int> values) {
     return values.entries
         .toList()
         .asMap()
@@ -116,9 +146,8 @@ class TopMajorsScreen extends StatelessWidget {
           final value = entry.value;
           final isTouched = index == touchedIndex;
 
-          final radius = isTouched ? 80.0 : 70.0; // Adjust radius
-          final color = context.primary
-              .withOpacity((0.8 - (index * 0.1)).clamp(0.1, 1.0));
+          final radius = isTouched ? 75.0 : 60.0; // Adjust radius
+          final color = orangeColors[index % orangeColors.length];
 
           return MapEntry(
             title,
@@ -132,5 +161,38 @@ class TopMajorsScreen extends StatelessWidget {
         })
         .values
         .toList();
+  }
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge({
+    required this.skill,
+    required this.value,
+  });
+
+  final String skill;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: PieChart.defaultDuration,
+      decoration: BoxDecoration(
+        color: context.bg3,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withOpacity(.5),
+            offset: const Offset(2, 2),
+            blurRadius: 2,
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(16),
+      child: Text(
+        skill,
+        style: TextStyle(color: context.textColor3),
+      ),
+    );
   }
 }

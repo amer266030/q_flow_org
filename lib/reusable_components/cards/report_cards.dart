@@ -20,7 +20,8 @@ class ReportCards extends StatelessWidget {
         height: context.screenWidth * 0.6,
         width: context.screenWidth * 0.43,
         child: Card(
-          elevation: 4,
+          color: context.bg2,
+          elevation: 6,
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 24.0,

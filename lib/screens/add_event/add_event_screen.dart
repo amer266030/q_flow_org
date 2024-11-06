@@ -1,3 +1,4 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -200,7 +201,17 @@ class AddEventScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 16),
                     PrimaryBtn(
-                        callback: () => cubit.createEvent(context),
+                        callback: () {
+                          if (cubit.validateFields()) {
+                            cubit.createEvent(context);
+                          } else {
+                            cubit.showSnackBar(
+                              context,
+                              'Please fill all required fields and upload necessary files.',
+                              AnimatedSnackBarType.error,
+                            );
+                          }
+                        },
                         title: isInitialSetup ? 'Save' : 'Update')
                   ],
                 ),
@@ -249,7 +260,7 @@ class _ImgView extends StatelessWidget {
                             ? Image.file(cubit.imgUrl!, fit: BoxFit.cover)
                             : event?.imgUrl == null
                                 ? Image(
-                                    image: Img.logoPurple, fit: BoxFit.cover)
+                                    image: Img.logoOrange, fit: BoxFit.cover)
                                 : Image.network(event!.imgUrl!,
                                     fit: BoxFit.cover),
                       ),

@@ -24,6 +24,7 @@ class EventsCubit extends Cubit<EventsState> {
   bool isEnglish = true;
 
   initialLoad(BuildContext context) async {
+   
     final prefs = await SharedPreferences.getInstance();
 
     final savedTheme = prefs.getString('theme');
@@ -60,6 +61,7 @@ class EventsCubit extends Cubit<EventsState> {
 
   logout(BuildContext context) => Navigator.of(context)
       .pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));
+      
 
   @override
   void emit(EventsState state) {

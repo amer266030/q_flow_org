@@ -137,15 +137,17 @@ class _PageHeaderView extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Row(
             children: [
               Expanded(
-                child: ClipOval(
-                  child: Image(image: Img.logoTurquoise, fit: BoxFit.contain),
+                child: AspectRatio(
+                  aspectRatio: 1.4,
+                  child: ClipOval(
+                    child: Image(image: Img.logo, fit: BoxFit.contain),
+                  ),
                 ),
               ),
-              SizedBox(width: 8),
               Expanded(
                   flex: 4,
                   child: Text('Tuwaiq Academy', style: context.titleSmall))

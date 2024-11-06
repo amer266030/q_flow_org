@@ -4,6 +4,8 @@ class Validations {
     if (regex.hasMatch(value) || value.isEmpty) {
       // Valid email address
       return null;
+    } else if (!regex.hasMatch(value)) {
+      return 'Invalid name format';
     } else {
       // Invalid email address
       return 'This Field Cannot be Empty';

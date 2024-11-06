@@ -1,26 +1,37 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:q_flow_organizer/model/user/company.dart';
+
+import 'package:q_flow_organizer/screens/most_applied/network_functions.dart';
 
 part 'most_applied_state.dart';
 
 class MostAppliedCubit extends Cubit<MostAppliedState> {
+  MostAppliedState? previousState;
   MostAppliedCubit() : super(MostAppliedInitial()) {
-    // Initialize with some sample data
-    companies = [
-      Company(name: 'Company A'),
-      Company(name: 'Company B'),
-      Company(name: 'Company C'),
-    ];
+    initialLoad();
   }
-
-  List<Company> companies = [];
+  List<Map<String, dynamic>> companies = [];
   int touchedGroupIndex = -1;
+  initialLoad() async {
+    emitLoading();
+    await fetchInterviewCounts();
+    emitUpdate();
+  }
 
   void updateTouchedGroupIndex(int index) {
     touchedGroupIndex = index;
     emitUpdate();
   }
 
-  void emitUpdate() => emit(UpdateUIState());
+  @override
+  void emit(MostAppliedState state) {
+    previousState = this.state;
+    super.emit(state);
+  }
+
+  emitUpdate() => emit(UpdateUIState());
+  emitLoading() => emit(LoadingState());
+  emitError(msg) => emit(ErrorState(msg));
 }

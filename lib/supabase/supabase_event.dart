@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:q_flow_organizer/model/event/event.dart';
+import 'package:q_flow_organizer/model/event/event_invited_company.dart';
+import 'package:q_flow_organizer/model/event/event_invited_visitor.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/event/event_invited_company_email.dart';
@@ -138,6 +140,41 @@ class SupabaseEvent {
       var response =
           await supabase.from(visitorTableKey).insert(visitorData).select();
       return response;
+    } on AuthException catch (_) {
+      rethrow;
+    } on PostgrestException catch (_) {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<EventInvitedVisitor>> fetchInvitedVisitors() async {
+    try {
+      var res = await supabase.from(visitorTableKey).select();
+      List<EventInvitedVisitor> visitors = (res as List)
+          .map((visitor) =>
+              EventInvitedVisitor.fromJson(visitor as Map<String, dynamic>))
+          .toList();
+      print(visitors.length);
+      return visitors;
+    } on AuthException catch (_) {
+      rethrow;
+    } on PostgrestException catch (_) {
+      rethrow;
+    } catch (e) {
+      rethrow;
+    }
+  }
+  static Future<List<EventInvitedCompany>> fetchInvitedCompanies() async {
+    try {
+      var res = await supabase.from(companyTableKey).select();
+      List<EventInvitedCompany> companies = (res as List)
+          .map((companies) =>
+              EventInvitedCompany.fromJson(companies as Map<String, dynamic>))
+          .toList();
+      print(companies.length);
+      return companies;
     } on AuthException catch (_) {
       rethrow;
     } on PostgrestException catch (_) {

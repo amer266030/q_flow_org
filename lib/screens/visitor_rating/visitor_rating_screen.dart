@@ -2,6 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:q_flow_organizer/model/rating/visitor_rating_question.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
 import 'package:q_flow_organizer/reusable_components/indicator.dart';
 import 'package:q_flow_organizer/reusable_components/page_header_view.dart';
 import 'package:q_flow_organizer/screens/visitor_rating/visitor_rating_cubit.dart';
@@ -18,161 +21,212 @@ class VisitorRatingScreen extends StatelessWidget {
       create: (context) => VisitorRatingCubit(),
       child: Builder(builder: (context) {
         final cubit = context.read<VisitorRatingCubit>();
-        return Scaffold(
-          appBar: AppBar(),
-          body: SafeArea(
+
+        return BlocListener<VisitorRatingCubit, VisitorRatingState>(
+          listener: (context, state) {
+            if (state is LoadingState) {
+              showLoadingDialog(context);
+            } else if (state is ErrorState) {
+              showErrorDialog(context, state.msg);
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(),
+            body: SafeArea(
               child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: ListView(
-              children: [
-                BlocBuilder<VisitorRatingCubit, VisitorRatingState>(
-                  builder: (context, state) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        PageHeaderView(title: 'Rating Visitors \nChart'),
-                        AspectRatio(aspectRatio: 1.2, child: VisitorBarChart()),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          'Rating Questions List',
-                          style: TextStyle(
-                              fontSize: context.titleSmall.fontSize,
-                              fontWeight: FontWeight.bold,
-                              color: context.textColor1),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Indicator(
-                          color: context.secondary,
-                          text: 'Tech Skills',
-                          textColor: context.textColor2,
-                        ),
-                        Indicator(
-                          color: context.secondary,
-                          text: 'Jop Skills',
-                          textColor: context.textColor2,
-                        ),
-                        Indicator(
-                          color: context.secondary,
-                          text: 'Soft Skills',
-                          textColor: context.textColor2,
-                        ),
-                      ],
-                    );
-                  },
+                padding: const EdgeInsets.all(24.0),
+                child: ListView(
+                  children: [
+                    BlocBuilder<VisitorRatingCubit, VisitorRatingState>(
+                      builder: (context, state) {
+                        if (state is LoadingState) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (cubit.questions.isEmpty ||
+                            cubit.questionAvgRatings.isEmpty) {
+                          return Center(child: Text("No data available."));
+                        }
+
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PageHeaderView(title: 'Rating Visitors \nChart'),
+                            SizedBox(height: 20),
+                            RatingVisitorsBarChart(
+                              touchedGroupIndex: cubit.touchedGroupIndex,
+                              questions: cubit.questions,
+                              questionAvgRatings: cubit.questionAvgRatings,
+                              onTouch: (index) {
+                                cubit.updateTouchedGroupIndex(index);
+                              },
+                            ),
+                            SizedBox(height: 50),
+                            Text(
+                              'Rating Questions List',
+                              style: TextStyle(
+                                fontSize: context.titleSmall.fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: context.textColor1,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            ...cubit.questions.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              VisitorRatingQuestion question = entry.value;
+                              return Indicator(
+                                icon: CupertinoIcons.star_fill,
+                                showIndicator: false,
+                                text: 'Q${index + 1}: ${question.title}',
+                                count:
+                                    "${cubit.questionAvgRatings[question.id]?.toStringAsFixed(1) ?? 0.0}",
+                              );
+                            }).toList(),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          )),
+          ),
         );
       }),
     );
   }
 }
 
-class VisitorBarChart extends StatelessWidget {
-  const VisitorBarChart();
+class RatingVisitorsBarChart extends StatelessWidget {
+  final int touchedGroupIndex;
+  final List<VisitorRatingQuestion> questions;
+  final Map<String, double> questionAvgRatings;
+  final ValueChanged<int> onTouch;
+
+  RatingVisitorsBarChart({
+    Key? key,
+    required this.touchedGroupIndex,
+    required this.questions,
+    required this.questionAvgRatings,
+    required this.onTouch,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: context.bg2,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 40,
-        ),
-        child: BarChart(
-          BarChartData(
-            barTouchData: barTouchData(context),
-            titlesData: titlesData(context),
-            borderData: borderData,
-            barGroups: barGroups(context),
-            gridData: const FlGridData(show: false),
-            alignment: BarChartAlignment.spaceAround,
-            maxY: 5,
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Card(
+        color: context.bg2,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(height: 38),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: BarChart(
+                    mainBarData(context, touchedGroupIndex),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
         ),
       ),
     );
   }
 
-  BarTouchData barTouchData(BuildContext context) => BarTouchData(
-        enabled: false,
+  BarChartData mainBarData(BuildContext context, int touchedIndex) {
+    return BarChartData(
+      barTouchData: BarTouchData(
         touchTooltipData: BarTouchTooltipData(
-          getTooltipColor: (group) => Colors.transparent,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 4,
-          getTooltipItem: (
-            BarChartGroupData group,
-            int groupIndex,
-            BarChartRodData rod,
-            int rodIndex,
-          ) {
-            return BarTooltipItem(
-              rod.toY.round().toString(),
-              TextStyle(
-                color: context.primary, // Use Context.Primary directly
-                fontWeight: FontWeight.bold,
-              ),
-            );
+          getTooltipColor: (_) => context.bg1,
+          tooltipHorizontalAlignment: FLHorizontalAlignment.center,
+          tooltipMargin: -10,
+          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+            if (touchedIndex == group.x) {
+              String? questionTitle = questions[group.x].title;
+
+              return BarTooltipItem(
+                '$questionTitle\n',
+                TextStyle(
+                  color: context.textColor3,
+                  fontWeight: context.titleMedium.fontWeight,
+                  fontSize: context.bodySmall.fontSize,
+                ),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: rod.toY.toStringAsFixed(1).toString(),
+                    style: TextStyle(
+                      color: context.textColor3,
+                      fontWeight: context.titleMedium.fontWeight,
+                      fontSize: context.bodySmall.fontSize,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return null; // No tooltip for non-touched bars
+            }
           },
         ),
-      );
-
-  Widget getTitles(double value, TitleMeta meta, BuildContext context) {
-    final style = TextStyle(
-      color: context.textColor2,
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 0:
-        text = 'Tech Skills';
-        break;
-      case 1:
-        text = 'Jop Skills';
-        break;
-      case 2:
-        text = 'Soft Skills';
-        break;
-
-      default:
-        text = '';
-        break;
-    }
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4,
-      child: Text(text, style: style),
+        touchCallback: (FlTouchEvent event, BarTouchResponse? response) {
+          if (event is FlTapDownEvent &&
+              response != null &&
+              response.spot != null) {
+            final index = response.spot!.touchedBarGroupIndex;
+            onTouch(index); // Call the onTouch callback
+          } else {
+            onTouch(-1); // Reset if not touching
+          }
+        },
+      ),
+      titlesData: FlTitlesData(
+          show: true,
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              getTitlesWidget: (value, meta) => getTitles(value, meta, context),
+              reservedSize: 38,
+            ),
+          ),
+          leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+            showTitles: false,
+          ))),
+      borderData: FlBorderData(
+        show: false,
+      ),
+      barGroups: barGroups(context),
+      gridData: const FlGridData(show: false),
     );
   }
 
-  FlTitlesData titlesData(BuildContext context) => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: (value, meta) =>
-                getTitles(value, meta, context), // Pass context here
-          ),
-        ),
-        leftTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
+  List<BarChartGroupData> barGroups(BuildContext context) {
+    return questionAvgRatings.entries.toList().asMap().entries.map((entry) {
+      int index = entry.key;
+      double rating = entry.value.value;
 
-  FlBorderData get borderData => FlBorderData(show: false);
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            width: 15,
+            toY: rating,
+            gradient: _barsGradient(context),
+          ),
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
+  }
 
   LinearGradient _barsGradient(BuildContext context) => LinearGradient(
         colors: [context.primary, context.secondary],
@@ -180,36 +234,17 @@ class VisitorBarChart extends StatelessWidget {
         end: Alignment.topCenter,
       );
 
-  List<BarChartGroupData> barGroups(BuildContext context) => [
-        BarChartGroupData(
-          x: 0,
-          barRods: [
-            BarChartRodData(
-              toY: 2,
-              gradient: _barsGradient(context),
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 1,
-          barRods: [
-            BarChartRodData(
-              toY: 5,
-              gradient: _barsGradient(context),
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 2,
-          barRods: [
-            BarChartRodData(
-              toY: 4,
-              gradient: _barsGradient(context),
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-      ];
+  Widget getTitles(double value, TitleMeta meta, BuildContext context) {
+    final style = TextStyle(
+      color: context.textColor2,
+      fontWeight: context.titleMedium.fontWeight,
+      fontSize: context.bodyMedium.fontSize,
+    );
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 16,
+      child: Text('Q${value.toInt() + 1}', style: style),
+    );
+  }
 }

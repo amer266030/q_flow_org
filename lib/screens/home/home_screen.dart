@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/extensions/screen_size.dart';
 import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
+import 'package:q_flow_organizer/reusable_components/dialogs/loading_dialog.dart';
+import 'package:q_flow_organizer/screens/home/subviwes/stat_cards_view.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';
 import '../../extensions/img_ext.dart';
@@ -20,242 +23,115 @@ class HomeScreen extends StatelessWidget {
       create: (context) => HomeCubit(),
       child: Builder(builder: (context) {
         final cubit = context.read<HomeCubit>();
-        return Scaffold(
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: ListView(
-                children: [
-                  _HeaderView(
-                    onBack: () => cubit.navigateBack(context),
-                    onScan: () => cubit.scanQR(context),
-                    onEdit: () => cubit.navigateToEditEvent(context, event),
-                    event: event,
-                  ),
-                   Divider(color: context.textColor3),
-                  _SectionHeaderView(title: 'Overall Stats'),
-                  _StatCardsView(
-                    numCompanies: 100,
-                    numVisitors: 1000,
-                    numInterviews: 2500,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 50,
-                          ),
-                          _SectionHeaderView(title: 'Event Reports'),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToTopMajors(context),
-                            title: 'Top In-demand\nMajors',
-                            icon: Icons.pie_chart_rounded,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToCompanyRating(context),
-                            title: 'Total Company\nRating',
-                            icon: Icons.bar_chart_rounded,
-                          )
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ReportCards(
-                            onTap: () => cubit.navigateToMostApplied(context),
-                            title: 'Most applied\nfor companies',
-                            icon: Icons.bar_chart_rounded,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ReportCards(
-                            onTap: () => cubit.navigateToVisitorRating(
-                              context,
+        return BlocListener<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (cubit.previousState is LoadingState) {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              }
+            }
+
+            if (state is LoadingState) {
+              showLoadingDialog(context);
+            }
+
+            if (state is ErrorState) {
+              showErrorDialog(context, state.msg);
+            }
+          },
+          child: Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: ListView(
+                  children: [
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return _HeaderView(
+                          onBack: () => cubit.navigateBack(context),
+                          onScan: () => cubit.scanQR(context),
+                          onEdit: () =>
+                              cubit.navigateToEditEvent(context, event),
+                          event: event,
+                        );
+                      },
+                    ),
+                    Divider(color: context.textColor3),
+                    _SectionHeaderView(title: 'Overall Stats'),
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return StatCardsView(
+                          totalInvitedVisitors: cubit.totalInvitedVisitors,
+                          numCompanies: cubit.numCompanies,
+                          numVisitors: cubit.numVisitors,
+                          numInterviews: cubit.numInterviews,
+                          viewCompanies: () =>
+                              cubit.navigateToCompanies(context),
+                          viewInterviews: () =>
+                              cubit.navigateToInterviews(context),
+                          viewVisitors: () => cubit.navigateToVisitors(context),
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 50,
                             ),
-                            title: 'Total Visitor\nRating',
-                            icon: Icons.bar_chart_rounded,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                            _SectionHeaderView(title: 'Event Reports'),
+                            SizedBox(
+                              height: 6,
+                            ),
+                            ReportCards(
+                              onTap: () => cubit.navigateToTopMajors(context),
+                              title: 'Top In-demand\nMajors',
+                              icon: Icons.pie_chart_rounded,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            ReportCards(
+                              onTap: () {
+                                cubit.navigateToCompanyRating(context);
+                              },
+                              title: 'Total Company\nRating',
+                              icon: Icons.bar_chart_rounded,
+                            )
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ReportCards(
+                              onTap: () => cubit.navigateToMostApplied(context),
+                              title: 'Most applied\nfor companies',
+                              icon: Icons.bar_chart_rounded,
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            ReportCards(
+                              onTap: () => cubit.navigateToVisitorRating(
+                                context,
+                              ),
+                              title: 'Total Visitor\nRating',
+                              icon: Icons.bar_chart_rounded,
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         );
       }),
-    );
-  }
-}
-
-class _StatCardsView extends StatelessWidget {
-  const _StatCardsView({
-    super.key,
-    required this.numCompanies,
-    required this.numVisitors,
-    required this.numInterviews,
-  });
-
-  final int numCompanies;
-  final int numVisitors;
-  final int numInterviews;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Column(
-          children: [
-            SizedBox(
-              height: 80,
-            ),
-            Container(
-              height: context.screenWidth * 0.27,
-              width: context.screenWidth * 0.27,
-              child: Card(
-                shape: CircleBorder(),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.building_2_fill,
-                        color: context.textColor3,
-                      ),
-                      Text(
-                        '$numCompanies',
-                        style: TextStyle(
-                          fontSize: context.titleSmall.fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: context.primary,
-                        ),
-                      ),
-                      Text(
-                        'Companies',
-                        style: TextStyle(
-                          fontSize: context.bodySmall.fontSize,
-                          color: context.textColor1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: context.screenWidth * 0.3,
-                width: context.screenWidth * 0.3,
-                child: Card(
-                  shape: CircleBorder(),
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(height: 4),
-                        Icon(
-                          CupertinoIcons.person_3_fill,
-                          color: context.textColor3,
-                        ),
-                        SizedBox(height: 6),
-                        Text(
-                          '$numVisitors',
-                          style: TextStyle(
-                            fontSize: context.titleSmall.fontSize,
-                            fontWeight: FontWeight.bold,
-                            color: context.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Visitors',
-                          style: TextStyle(
-                            fontSize: context.bodyLarge.fontSize,
-                            color: context.textColor1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                height: context.screenWidth * 0.3,
-                width: context.screenWidth * 0.3,
-                child: CircularProgressIndicator(
-                  strokeWidth: 7,
-                  color: context.primary,
-                  backgroundColor: context.bg2,
-                  value: 10 / 100,
-                  strokeCap: StrokeCap.round,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Column(
-          children: [
-            SizedBox(
-              height: 80,
-            ),
-            Container(
-              height: context.screenWidth * 0.27,
-              width: context.screenWidth * 0.27,
-              child: Card(
-                shape: CircleBorder(),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        CupertinoIcons.person_2_square_stack_fill,
-                        color: context.textColor3,
-                      ),
-                      Text(
-                        '$numInterviews',
-                        style: TextStyle(
-                          fontSize: context.titleSmall.fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: context.primary,
-                        ),
-                      ),
-                      Text(
-                        'Interviews',
-                        style: TextStyle(
-                          fontSize: context.bodySmall.fontSize,
-                          color: context.textColor1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
@@ -284,58 +160,62 @@ class _HeaderView extends StatelessWidget {
           padding: const EdgeInsets.all(2),
           child: AspectRatio(
             aspectRatio: 1,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: event.imgUrl == null
-                  ? Image(image: Img.logoPurple, fit: BoxFit.cover)
-                  : FadeInImage(
-                      placeholder: Img.logoTurquoise,
-                      image: NetworkImage(event.imgUrl ?? ''),
-                      fit: BoxFit.cover,
-                      imageErrorBuilder: (context, error, stackTrace) {
-                        return Image(
-                            image: Img.logoTurquoise, fit: BoxFit.cover);
-                      },
-                    ),
+            child: InkWell(
+              onTap: onEdit,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: event.imgUrl == null
+                    ? Image(image: Img.logoOrange, fit: BoxFit.cover)
+                    : FadeInImage(
+                        placeholder: Img.logoOrange,
+                        image: NetworkImage(event.imgUrl ?? ''),
+                        fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image(
+                              image: Img.logoOrange, fit: BoxFit.cover);
+                        },
+                      ),
+              ),
             ),
           ),
         )),
         const SizedBox(width: 8),
         Expanded(
           flex: 4,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  InkWell(
-                      onTap: onEdit,
-                      child: Icon(
-                        CupertinoIcons.square_pencil,
-                        color: context.primary,
-                        size: context.titleSmall.fontSize,
-                      )),
-                  SizedBox(width: 4),
-                  Text(event.name ?? '',
-                      style: context.bodyMedium, maxLines: 1, softWrap: true)
-                ],
-              ),
-              SizedBox(height: 4),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Icon(
-                    CupertinoIcons.calendar,
-                    color: context.textColor2,
-                    size: context.titleSmall.fontSize,
-                  ),
-                  SizedBox(width: 4),
-                  Text('${event.startDate} - ${event.endDate}',
-                      style: context.bodySmall, maxLines: 1, softWrap: true),
-                ],
-              ),
-            ],
+          child: InkWell(
+            onTap: onEdit,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.edit,
+                      color: context.primary,
+                      size: context.titleSmall.fontSize,
+                    ),
+                    SizedBox(width: 4),
+                    Text(event.name ?? '',
+                        style: context.bodyMedium, maxLines: 1, softWrap: true)
+                  ],
+                ),
+                SizedBox(height: 4),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Icon(
+                      CupertinoIcons.calendar,
+                      color: context.primary,
+                      size: context.titleSmall.fontSize,
+                    ),
+                    SizedBox(width: 4),
+                    Text('${event.startDate} - ${event.endDate}',
+                        style: context.bodySmall, maxLines: 1, softWrap: true),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         Expanded(
