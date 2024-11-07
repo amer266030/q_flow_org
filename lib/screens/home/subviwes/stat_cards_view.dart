@@ -41,7 +41,7 @@ class StatCardsView extends StatelessWidget {
                 children: [
                   _CircleCard(
                       currentNum: numInterviews,
-                      totalNum: 1,
+                      totalNum: 99999,
                       callback: viewInterviews,
                       title: 'Interviews',
                       icon: CupertinoIcons.rectangle_stack_person_crop),
@@ -140,9 +140,9 @@ class _CircleCard extends StatelessWidget {
               aspectRatio: 1,
               child: CircularProgressIndicator(
                 strokeWidth: 5,
-                color: context.primary,
+                color: totalNum == 99999 ? Colors.transparent : context.primary,
                 backgroundColor:
-                    currentNum == 0 ? Colors.transparent : context.bg1,
+                    totalNum == 99999 ? Colors.transparent : context.bg1,
                 value: currentNum / totalNum,
                 strokeCap: StrokeCap.round,
               ),
