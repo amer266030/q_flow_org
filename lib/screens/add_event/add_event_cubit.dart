@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:q_flow_organizer/extensions/date_ext.dart';
+import 'package:q_flow_organizer/model/event/event_invited_user.dart';
 import 'package:q_flow_organizer/reusable_components/animated_snack_bar.dart';
 import 'package:q_flow_organizer/utils/excel_util.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../model/event/event.dart';
-import '../../model/event/event_invited_company_email.dart';
-import '../../model/event/event_invited_visitor_email.dart';
 
 part 'add_event_state.dart';
 
@@ -31,8 +30,7 @@ class AddEventCubit extends Cubit<AddEventState> {
   File? companiesFile;
   File? usersFile;
 
-  List<EventInvitedVisitorEmail> visitorEmails = [];
-  List<EventInvitedCompanyEmail> companyEmails = [];
+  List<EventInvitedUser> eventInvitedUsers = [];
 
   initialLoad(Event? event) {
     if (event?.id != null) {
@@ -53,8 +51,8 @@ class AddEventCubit extends Cubit<AddEventState> {
     if (nameController.text.isEmpty ||
         locationController.text.isEmpty ||
         startDate.isBefore(currentDate) ||
-        companiesFile ==null ||
-        usersFile == null ||
+        // companiesFile == null ||
+        // usersFile == null ||
         endDate.isBefore(startDate)) {
       return false;
     }
@@ -80,9 +78,12 @@ class AddEventCubit extends Cubit<AddEventState> {
   uploadCompanyFile() async {
     var companiesArr = await ExcelUtil.importExcel();
     for (var company in companiesArr) {
-      var newItem = EventInvitedCompanyEmail(
-          eventId: eventId, companyName: company.$1, email: company.$2);
-      companyEmails.add(newItem);
+      var item = EventInvitedUser(
+          eventId: eventId,
+          name: company.$1,
+          email: company.$2,
+          isCompany: true);
+      eventInvitedUsers.add(item);
     }
     emitUpdate();
   }
@@ -90,14 +91,17 @@ class AddEventCubit extends Cubit<AddEventState> {
   uploadVisitorsFile() async {
     var visitorsArr = await ExcelUtil.importExcel();
     for (var visitor in visitorsArr) {
-      var newItem = EventInvitedVisitorEmail(
-          eventId: eventId, visitorName: visitor.$1, email: visitor.$2);
-      visitorEmails.add(newItem);
+      var item = EventInvitedUser(
+          eventId: eventId,
+          name: visitor.$1,
+          email: visitor.$2,
+          isCompany: false);
+      eventInvitedUsers.add(item);
     }
     emitUpdate();
   }
 
-    void showSnackBar(
+  void showSnackBar(
       BuildContext context, String msg, AnimatedSnackBarType type) {
     if (context.mounted) {
       animatedSnakbar(msg: msg, type: type).show(context);

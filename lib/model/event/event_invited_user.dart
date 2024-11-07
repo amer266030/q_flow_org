@@ -6,6 +6,7 @@ class EventInvitedUser {
   String? visitorId;
   String? companyId;
   bool? isCompany;
+  String? name;
 
   EventInvitedUser({
     this.id,
@@ -15,6 +16,7 @@ class EventInvitedUser {
     this.visitorId,
     this.companyId,
     this.isCompany,
+    this.name,
   });
 
   factory EventInvitedUser.fromJson(Map<String, dynamic> json) {
@@ -26,18 +28,19 @@ class EventInvitedUser {
       visitorId: json['visitor_id'] as String?,
       companyId: json['company_id'] as String?,
       isCompany: json['is_company'] as bool?,
+      name: json['name'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'event_id': eventId,
       'email': email,
       'invited_at': invitedAt,
       'visitor_id': visitorId,
       'company_id': companyId,
       'is_company': isCompany,
+      'name': name,
     };
   }
 }

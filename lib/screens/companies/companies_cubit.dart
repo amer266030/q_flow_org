@@ -1,27 +1,58 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:q_flow_organizer/model/enums/attendance.dart';
 import 'package:q_flow_organizer/model/user/company.dart';
-import 'package:q_flow_organizer/screens/companies/network_functions.dart';
-import 'package:q_flow_organizer/screens/company_rating/company_rating_cubit.dart';
-import 'package:q_flow_organizer/supabase/subapase_company.dart';
+
+import '../../model/event/event_invited_user.dart';
 
 part 'companies_state.dart';
 
 class CompaniesCubit extends Cubit<CompaniesState> {
-  CompaniesCubit() : super(CompaniesInitial()) {
-    initialLoad();
+  CompaniesCubit(
+      List<EventInvitedUser> invitedCompanies, List<Company> allCompanies)
+      : super(CompaniesInitial()) {
+    initialLoad(invitedCompanies, allCompanies);
   }
   CompaniesState? previousState;
-  List<Company>? companies;
+  List<EventInvitedUser> invitedCompanies = [];
+  List<Company> allCompanies = [];
+  List<Company> attended = [];
+  List<Company> didNotAttend = [];
+  List<Company> filteredCompanies = [];
+  var selectedStatus = Attendance.attended;
 
-  initialLoad() async {
+  initialLoad(List<EventInvitedUser> invitedCompanies,
+      List<Company> allCompanies) async {
     emitLoading();
-
-    await loadCompanies();
+    this.invitedCompanies = invitedCompanies;
+    this.allCompanies = allCompanies;
+    createCompanySegments();
+    filterCompanies();
     emitUpdate();
   }
 
- 
+  setSelectedStatus(int idx) {
+    selectedStatus = Attendance.values[idx];
+    filterCompanies();
+    emitUpdate();
+  }
+
+  filterCompanies() {
+    filteredCompanies =
+        selectedStatus == Attendance.attended ? attended : didNotAttend;
+  }
+
+  createCompanySegments() {
+    var attendedCompanyIds = invitedCompanies
+        .where((c) => c.companyId != null)
+        .map((c) => c.companyId)
+        .toList();
+
+    attended =
+        allCompanies.where((c) => attendedCompanyIds.contains(c.id)).toList();
+    didNotAttend =
+        allCompanies.where((c) => !attendedCompanyIds.contains(c.id)).toList();
+  }
 
   @override
   void emit(CompaniesState state) {

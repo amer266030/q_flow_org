@@ -1,20 +1,16 @@
 import 'dart:io';
 
 import 'package:q_flow_organizer/model/event/event.dart';
-import 'package:q_flow_organizer/model/event/event_invited_company.dart';
-import 'package:q_flow_organizer/model/event/event_invited_visitor.dart';
+import 'package:q_flow_organizer/model/event/event_invited_user.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../model/event/event_invited_company_email.dart';
-import '../model/event/event_invited_visitor_email.dart';
 import '../utils/img_converter.dart';
 import 'client/supabase_mgr.dart';
 
 class SupabaseEvent {
   static final SupabaseClient supabase = SupabaseMgr.shared.supabase;
   static final String eventTableKey = 'event';
-  static final String companyTableKey = 'event_invited_company_email';
-  static final String visitorTableKey = 'event_invited_visitor_email';
+  static final String invitationTableKey = 'event_invited_user';
   static final String bucketKey = 'event_logo';
 
   static Future<List<Event>>? fetchEvents() async {
@@ -23,7 +19,7 @@ class SupabaseEvent {
       List<Event> events = (res as List)
           .map((event) => Event.fromJson(event as Map<String, dynamic>))
           .toList();
-      print(events.length);
+
       return events;
     } on AuthException catch (_) {
       rethrow;
@@ -45,16 +41,12 @@ class SupabaseEvent {
           .insert(event.toJson())
           .select()
           .single();
-      print(response);
       return response;
     } on AuthException catch (_) {
-      print('AUTH EXCEPTION');
       rethrow;
     } on PostgrestException catch (e) {
-      print(e.toString());
       rethrow;
     } catch (e) {
-      print(e.toString());
       rethrow;
     }
   }
@@ -110,20 +102,17 @@ class SupabaseEvent {
     } on AuthException catch (_) {
       rethrow;
     } on PostgrestException catch (e) {
-      print('Postgrest error: ${e.message}');
       rethrow;
     } catch (e) {
-      print('General error: $e');
       rethrow;
     }
   }
 
-  static Future inviteCompanies(
-      List<EventInvitedCompanyEmail> companies) async {
+  static Future inviteUsers(List<EventInvitedUser> companies) async {
     try {
-      var companyData = companies.map((company) => company.toJson()).toList();
+      var usersData = companies.map((company) => company.toJson()).toList();
       var response =
-          await supabase.from(companyTableKey).insert(companyData).select();
+          await supabase.from(invitationTableKey).insert(usersData).select();
       return response;
     } on AuthException catch (_) {
       rethrow;
@@ -134,30 +123,14 @@ class SupabaseEvent {
     }
   }
 
-  static Future inviteVisitors(List<EventInvitedVisitorEmail> visitors) async {
+  static Future<List<EventInvitedUser>> fetchInvitedUsers() async {
     try {
-      var visitorData = visitors.map((company) => company.toJson()).toList();
-      var response =
-          await supabase.from(visitorTableKey).insert(visitorData).select();
-      return response;
-    } on AuthException catch (_) {
-      rethrow;
-    } on PostgrestException catch (_) {
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  static Future<List<EventInvitedVisitor>> fetchInvitedVisitors() async {
-    try {
-      var res = await supabase.from(visitorTableKey).select();
-      List<EventInvitedVisitor> visitors = (res as List)
+      var res = await supabase.from(invitationTableKey).select();
+      List<EventInvitedUser> users = (res as List)
           .map((visitor) =>
-              EventInvitedVisitor.fromJson(visitor as Map<String, dynamic>))
+              EventInvitedUser.fromJson(visitor as Map<String, dynamic>))
           .toList();
-      print(visitors.length);
-      return visitors;
+      return users;
     } on AuthException catch (_) {
       rethrow;
     } on PostgrestException catch (_) {
@@ -166,18 +139,23 @@ class SupabaseEvent {
       rethrow;
     }
   }
-  static Future<List<EventInvitedCompany>> fetchInvitedCompanies() async {
+
+  static Future setScannedQR(EventInvitedUser user) async {
+    if (user.id == null) {
+      throw ArgumentError('User ID cannot be null');
+    }
+
     try {
-      var res = await supabase.from(companyTableKey).select();
-      List<EventInvitedCompany> companies = (res as List)
-          .map((companies) =>
-              EventInvitedCompany.fromJson(companies as Map<String, dynamic>))
-          .toList();
-      print(companies.length);
-      return companies;
-    } on AuthException catch (_) {
+      final response = await supabase
+          .from(invitationTableKey)
+          .update(user.toJson())
+          .eq('id', user.id!)
+          .select()
+          .maybeSingle();
+      return response;
+    } on AuthException {
       rethrow;
-    } on PostgrestException catch (_) {
+    } on PostgrestException catch (e) {
       rethrow;
     } catch (e) {
       rethrow;

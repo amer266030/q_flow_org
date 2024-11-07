@@ -18,28 +18,36 @@ extension NetworkFunctions on AddEventCubit {
     try {
       emitLoading();
       await SupabaseEvent.createEvent(event: event, imageFile: imgUrl);
-      await Future.delayed(Duration(milliseconds: 50));
+
+      if (eventInvitedUsers.isNotEmpty) {
+        await SupabaseEvent.inviteUsers(eventInvitedUsers);
+      }
+
       Navigator.of(context).pop();
     } catch (e) {
       emitError('Could not create event!\nPlease try again later.');
     }
   }
 
-  updateEvent(BuildContext context, String eventId) async {
-    var event = Event(
-      name: nameController.text,
-      location: locationController.text,
-      startDate: startDate.toFormattedString(),
-      endDate: endDate.toFormattedString(),
-    );
+  updateEvent(BuildContext context, Event event) async {
+    event.name = nameController.text;
+    event.location = locationController.text;
+    event.startDate = startDate.toFormattedString();
+    event.endDate = endDate.toFormattedString();
+
     try {
       emitLoading();
       await SupabaseEvent.updateEvent(
           event: event, eventId: eventId, imageFile: imgUrl);
-      await Future.delayed(Duration(milliseconds: 50));
+
+      if (eventInvitedUsers.isNotEmpty) {
+        await SupabaseEvent.inviteUsers(eventInvitedUsers);
+      }
+
       Navigator.of(context).pop();
     } catch (e) {
-      emitError('Could not update event!\nPlease try again later.');
+      emitError('${e.toString()}');
+      // emitError('Could not update event!\nPlease try again later.');
     }
   }
 }

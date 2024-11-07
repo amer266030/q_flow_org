@@ -62,6 +62,7 @@ class HomeScreen extends StatelessWidget {
                       builder: (context, state) {
                         return StatCardsView(
                           totalInvitedVisitors: cubit.totalInvitedVisitors,
+                          totalInvitedCompanies: cubit.totalInvitedCompanies,
                           numCompanies: cubit.numCompanies,
                           numVisitors: cubit.numVisitors,
                           numInterviews: cubit.numInterviews,

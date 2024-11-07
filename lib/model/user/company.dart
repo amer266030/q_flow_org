@@ -1,4 +1,4 @@
-
+import '../bookmarks/bookmarked_visitor.dart';
 import '../enums/company_size.dart';
 import '../interview.dart';
 import '../skills/skill.dart';
@@ -7,6 +7,7 @@ import '../social_links/social_link.dart';
 class Company {
   String? id; // References profile_id
   String? name;
+  String? email;
   String? description;
   CompanySize? companySize;
   String? establishedYear;
@@ -17,10 +18,12 @@ class Company {
   List<Skill>? skills;
   int? queueLength;
   List<Interview>? interviews;
+  List<BookmarkedVisitor>? bookmarkedVisitors;
 
   Company({
     this.id,
     this.name,
+    this.email,
     this.description,
     this.companySize,
     this.establishedYear,
@@ -31,12 +34,14 @@ class Company {
     this.skills,
     this.queueLength,
     this.interviews,
+    this.bookmarkedVisitors,
   });
 
   factory Company.fromJson(Map<String, dynamic> json) {
     return Company(
       id: json['id'] as String?,
       name: json['name'] as String?,
+      email: json['email'] as String?,
       description: json['description'] as String?,
       // Convert the string representation of company size into enum
       companySize: json['company_size'] != null
@@ -62,6 +67,11 @@ class Company {
               .map((link) => Interview.fromJson(link))
               .toList()
           : null,
+      bookmarkedVisitors: json['bookmarked_visitors'] != null
+          ? (json['bookmarked_visitors'] as List)
+              .map((bm) => BookmarkedVisitor.fromJson(bm))
+              .toList()
+          : null,
     );
   }
 
@@ -69,14 +79,12 @@ class Company {
     return {
       'name': name,
       'description': description,
+      'email': email,
       'company_size': companySize?.value,
       'established_year': establishedYear,
       'avg_rating': avgRating,
       'logo_url': logoUrl,
       'is_queue_open': isQueueOpen,
-      // 'social_links': socialLinks?.map((link) => link.toJson()).toList(),
-      // 'skills': skills?.map((skill) => skill.toJson()).toList(),
-      'queue_length': queueLength,
     };
   }
 }

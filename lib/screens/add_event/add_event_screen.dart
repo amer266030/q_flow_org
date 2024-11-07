@@ -203,7 +203,9 @@ class AddEventScreen extends StatelessWidget {
                     PrimaryBtn(
                         callback: () {
                           if (cubit.validateFields()) {
-                            cubit.createEvent(context);
+                            isInitialSetup
+                                ? cubit.createEvent(context)
+                                : cubit.updateEvent(context, event ?? Event());
                           } else {
                             cubit.showSnackBar(
                               context,
