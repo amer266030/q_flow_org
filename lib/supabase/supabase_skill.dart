@@ -1,4 +1,3 @@
-import 'package:q_flow_organizer/model/skills/skill.dart';
 import 'package:q_flow_organizer/supabase/client/supabase_mgr.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

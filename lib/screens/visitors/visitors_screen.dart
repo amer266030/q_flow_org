@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:q_flow_organizer/reusable_components/buttons/expanded_toggle_buttons.dart';
-import 'package:q_flow_organizer/reusable_components/cards/company_card.dart';
 import 'package:q_flow_organizer/reusable_components/cards/visitor_card.dart';
-import 'package:q_flow_organizer/screens/companies/companies_cubit.dart';
 import 'package:q_flow_organizer/screens/visitors/visitors_cubit.dart';
 import 'package:q_flow_organizer/theme_data/extensions/text_style_ext.dart';
 import 'package:q_flow_organizer/theme_data/extensions/theme_ext.dart';

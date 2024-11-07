@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 import 'package:q_flow_organizer/screens/top_majors/network_functions.dart';
 
 part 'top_majors_state.dart';

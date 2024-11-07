@@ -182,11 +182,11 @@ class InterviewsCard extends StatelessWidget {
                   aspectRatio: 1,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: visitor?.avatarUrl != null &&
-                            visitor!.avatarUrl!.isNotEmpty
+                    child: visitor.avatarUrl != null &&
+                            visitor.avatarUrl!.isNotEmpty
                         ? FadeInImage(
                             placeholder: Img.logoOrange,
-                            image: NetworkImage(visitor!.avatarUrl!),
+                            image: NetworkImage(visitor.avatarUrl!),
                             fit: BoxFit.cover,
                             imageErrorBuilder: (context, error, stackTrace) {
                               return VisitorAvatar();

@@ -44,7 +44,7 @@ class SupabaseEvent {
       return response;
     } on AuthException catch (_) {
       rethrow;
-    } on PostgrestException catch (e) {
+    } on PostgrestException {
       rethrow;
     } catch (e) {
       rethrow;
@@ -101,7 +101,7 @@ class SupabaseEvent {
       return publicUrl;
     } on AuthException catch (_) {
       rethrow;
-    } on PostgrestException catch (e) {
+    } on PostgrestException {
       rethrow;
     } catch (e) {
       rethrow;
@@ -155,7 +155,7 @@ class SupabaseEvent {
       return response;
     } on AuthException {
       rethrow;
-    } on PostgrestException catch (e) {
+    } on PostgrestException {
       rethrow;
     } catch (e) {
       rethrow;

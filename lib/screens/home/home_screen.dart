@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:q_flow_organizer/extensions/screen_size.dart';
 import 'package:q_flow_organizer/model/event/event.dart';
 import 'package:q_flow_organizer/reusable_components/cards/report_cards.dart';
 import 'package:q_flow_organizer/reusable_components/dialogs/error_dialog.dart';
@@ -234,7 +233,7 @@ class _HeaderView extends StatelessWidget {
 }
 
 class _SectionHeaderView extends StatelessWidget {
-  const _SectionHeaderView({required this.title, this.ctaStr, this.callback});
+  const _SectionHeaderView({required this.title});
 
   final String title;
   final String? ctaStr;
