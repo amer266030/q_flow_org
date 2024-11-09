@@ -233,7 +233,7 @@ class _HeaderView extends StatelessWidget {
 }
 
 class _SectionHeaderView extends StatelessWidget {
-  const _SectionHeaderView({required this.title});
+  const _SectionHeaderView({required this.title, this.ctaStr, this.callback});
 
   final String title;
   final String? ctaStr;
