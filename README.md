@@ -91,7 +91,7 @@ The QFlow Organizer App gives event organizers the tools they need to manage job
 1. Clone the repository:
 
 ```
-   git clone https://github.com/amer266030/q_flow_organizer
+   git clone https://github.com/amer266030/q_flow_org
 ```
 
 3. Get the dependencies:
