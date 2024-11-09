@@ -4,6 +4,9 @@ QFlow (Organizer App) is a Flutter-based application developed for event organiz
 
 ![App Clip](q_flow_organizer.gif)
 
+- Video Explanation of app features:
+   - https://drive.google.com/drive/folders/10IxiwgVqs9G982_pECdJxInAHEq2mm0H
+
 ## Table of Contents
 
 - [App Overview](#app-overview)
